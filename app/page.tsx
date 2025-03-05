@@ -262,7 +262,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div 
+    <div
       className="relative min-h-screen bg-black text-white overflow-hidden"
       onMouseMove={handleMouseMove}
     >
@@ -343,8 +343,64 @@ export default function Home() {
             <span className="block h-1 w-20 mx-auto mt-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded"></span>
           </p>
           
+          {/* Add countdown timer here */}
+          <div className="mt-8 mb-6">
+            <p className="text-blue-300 mb-3">Event Starts In:</p>
+            {(() => {
+              const targetDate = new Date('2025-03-15T09:00:00').getTime();
+              const [timeLeft, setTimeLeft] = useState({
+                days: 0,
+                hours: 0,
+                minutes: 0,
+                seconds: 0
+              });
+
+              useEffect(() => {
+                const timer = setInterval(() => {
+                  const now = new Date().getTime();
+                  const distance = targetDate - now;
+
+                  setTimeLeft({
+                    days: Math.floor(distance / (1000 * 60 * 60 * 24)),
+                    hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+                    minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
+                    seconds: Math.floor((distance % (1000 * 60)) / 1000)
+                  });
+
+                  if (distance < 0) {
+                    clearInterval(timer);
+                    setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+                  }
+                }, 1000);
+
+                return () => clearInterval(timer);
+              }, []);
+
+              return (
+                <div className="grid grid-cols-4 gap-3 max-w-md mx-auto backdrop-blur-sm bg-black/20 rounded-xl p-4">
+                  <div className="bg-blue-900/50 border border-blue-500/30 rounded-lg p-3 text-center">
+                    <div className="text-2xl md:text-3xl font-bold text-blue-300">{timeLeft.days}</div>
+                    <div className="text-blue-400 text-xs">Days</div>
+                  </div>
+                  <div className="bg-blue-900/50 border border-blue-500/30 rounded-lg p-3 text-center">
+                    <div className="text-2xl md:text-3xl font-bold text-blue-300">{timeLeft.hours}</div>
+                    <div className="text-blue-400 text-xs">Hours</div>
+                  </div>
+                  <div className="bg-blue-900/50 border border-blue-500/30 rounded-lg p-3 text-center">
+                    <div className="text-2xl md:text-3xl font-bold text-blue-300">{timeLeft.minutes}</div>
+                    <div className="text-blue-400 text-xs">Minutes</div>
+                  </div>
+                  <div className="bg-blue-900/50 border border-blue-500/30 rounded-lg p-3 text-center">
+                    <div className="text-2xl md:text-3xl font-bold text-blue-300">{timeLeft.seconds}</div>
+                    <div className="text-blue-400 text-xs">Seconds</div>
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
+          
           {/* Replace your existing buttons with these */}
-          <div className="mt-10 flex gap-4">
+          <div className="mt-6 flex gap-4">
             <button 
               className="px-8 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 rounded-full text-white font-bold transition-all shadow-lg shadow-blue-500/20 hover:shadow-purple-500/40 transform hover:scale-105"
             >
@@ -560,7 +616,7 @@ export default function Home() {
             </h2>
             
             <div className="grid md:grid-cols-2 gap-10 items-center">
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, x: -50 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.7 }}
@@ -613,6 +669,7 @@ export default function Home() {
                   </div>
                 </div>
               </motion.div>
+              
             </div>
           </div>
         </section>
