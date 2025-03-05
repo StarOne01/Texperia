@@ -297,25 +297,28 @@ export default function Home() {
         ))}
       </div>
 
-      <main className=" z-10 mx-auto">
-        <div className="fixed z-0 overflow-hidden h-screen">
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="fixed z-[-10] w-full h-full object-cover opacity-60"
-          >
-            <source src="/tech-backgroud.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-          <div className="fixed z-[-10]  inset-0 bg-gradient-to-b from-black/50 to-black/70 "></div>
-        </div>
+      <main className="z-10 mx-auto">
+        {/* Remove the fixed video container from here */}
         
         <header 
           ref={headerRef}
           className="text-center flex justify-center items-center flex-col min-h-screen mb-20 relative z-10 overflow-hidden"
         >
+          {/* Add the video background inside the header */}
+          <div className="absolute inset-0 z-0 overflow-hidden">
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="absolute z-0 w-full h-full object-cover opacity-60"
+            >
+              <source src="/bg.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+            <div className="absolute z-0 inset-0 bg-gradient-to-b from-black/50 to-black/70"></div>
+          </div>
+          
           <div className="absolute inset-0 z-0">
             {/* Animated circuit board patterns */}
             <div className="absolute w-40 h-40 border border-blue-500/30 rounded-full top-1/4 left-1/4 animate-pulse-slow"></div>
@@ -499,125 +502,212 @@ export default function Home() {
           >
             Events
           </h1>
-        <div className="relative min-h-screen overflow-hidden py-20">
-  <div className="solar-system">
-    {/* Center sun */}
-    <div 
-      className="absolute w-24 h-24 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full 
-                 flex items-center justify-center z-10 shadow-lg shadow-blue-500/50 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-    >
-      <span className={`text-2xl font-bold text-white ${anta.className}`}>EVENTS</span>
-    </div>
-
-    {/* Orbiting events */}
-    {events.map((event, index) => {
-      const orbitSize = 150 + (index * 100);
-      const orbitDuration = 20 + (index * 5);
-      const eventPosition = (360 / events.length) * index;
-
-      return (
-        <div key={event.id}>
-          <div 
-            className="orbit absolute border border-blue-500/10 rounded-full"
-            style={{
-              width: `${orbitSize}px`,
-              height: `${orbitSize}px`,
-              left: `calc(50% - ${orbitSize/2}px)`,
-              top: `calc(50% - ${orbitSize/2}px)`,
-              animationDuration: `${orbitDuration}s`
-            }}
-          />
-
-          <motion.div
-            className="event-planet absolute"
-            style={{
-              left: '50%',
-              top: '50%',
-              transform: `rotate(${eventPosition}deg) translateY(-${orbitSize/2}px)`
-            }}
-            whileHover={{
-              scale: 1.2,
-              filter: 'brightness(1.2)'
-            }}
-            onClick={() => setSelectedEvent(event)}
-          >
-            <div 
-              className="w-12 h-12 rounded-full flex items-center justify-center transform -rotate-[var(--rotation)]"
-              style={{
-                background: `linear-gradient(45deg, ${event.color}, ${event.color}90)`,
-                boxShadow: `0 0 15px ${event.color}50`,
-                '--rotation': `${eventPosition}deg`
-              }}
-            >
-              <span className="text-white font-bold">{event.id}</span>
-            </div>
-
-            <motion.div
-              className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-full 
-                         bg-gradient-to-r from-blue-900/90 to-purple-900/90 backdrop-blur-md
-                         p-3 rounded-lg border border-blue-500/30 w-48 pointer-events-none
-                         opacity-0 transform -rotate-[var(--rotation)]"
-              initial={{ opacity: 0, y: 10 }}
-              whileHover={{ opacity: 1, y: -5 }}
-              style={{
-                '--rotation': `${eventPosition}deg`
-              }}
-            >
-              <p className="text-sm font-semibold text-blue-300">{event.title}</p>
-              <p className="text-xs text-blue-400/80">{event.description.substring(0, 50)}...</p>
-            </motion.div>
-          </motion.div>
-        </div>
-      );
-    })}
-  </div>
-
-  {/* Event details popup */}
-  <AnimatePresence>
-    {selectedEvent && (
-      <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.8 }}
-        className="fixed inset-0 z-50 flex items-center justify-center"
-        onClick={() => setSelectedEvent(null)}
-      >
         <div 
-          className="bg-gradient-to-br from-blue-900/95 to-purple-900/95 p-6 rounded-xl
-                     backdrop-blur-md border border-blue-500/30 max-w-md w-full mx-4"
-          onClick={e => e.stopPropagation()}
+          ref={eventsRef} 
+          className="grid p-16 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8"
         >
-          <div className="flex items-center gap-4 mb-4">
-            <div 
-              className="w-12 h-12 rounded-lg flex items-center justify-center"
-              style={{ background: `${selectedEvent.color}30` }}
+
+          {events.map((event, index) => (
+            <div
+              key={event.id}
+              className="event-box opacity-0 translate-y-10 relative bg-gradient-to-br from-blue-900/30 to-purple-900/30 rounded-xl p-6 cursor-pointer backdrop-blur-sm border border-blue-500/20 overflow-hidden group"
+              onClick={() => setSelectedEvent(event)}
+              style={{ '--delay': `${index * 0.1}s` } as React.CSSProperties}
             >
-              <span className="text-2xl">{selectedEvent.id}</span>
+              <div 
+                className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10 transform -translate-y-full group-hover:translate-y-0 transition-transform duration-500"
+                style={{ 
+                  background: `radial-gradient(circle at 50% 50%, ${event.color}20, transparent 70%)` 
+                }}
+              ></div>
+              
+              {/* Event content */}
+              <div className="relative z-10">
+                <div 
+                  className="w-16 h-16 mb-4 rounded-lg flex items-center justify-center"
+                  style={{ background: `${event.color}30` }}
+                >
+                  {/* Replace with your actual icons */}
+                  <div 
+                    className="w-10 h-10 rounded flex items-center justify-center text-xl"
+                    style={{ background: `${event.color}50` }}
+                  >
+                    {event.id}
+                  </div>
+                </div>
+                
+                <h3 className="text-xl font-bold mb-2 text-blue-300">{event.title}</h3>
+                <div 
+                  className="h-1 w-10 rounded mb-3 transition-all duration-300 group-hover:w-3/4"
+                  style={{ background: `linear-gradient(to right, ${event.color}, #805ad5)` }}  
+                ></div>
+                <p className="text-blue-100/70 text-sm mb-3">{event.description.substring(0, 60)}...</p>
+                <p className="text-blue-400 text-sm font-semibold mt-4 group-hover:text-blue-300 transition-colors">Click to explore →</p>
+              </div>
+              
+              {/* Interactive animation elements */}
+              <div className="absolute bottom-2 right-2 w-2 h-2 rounded-full bg-blue-400/50 group-hover:animate-ping"></div>
+              <div className="absolute top-2 left-2 w-2 h-2 rounded-full bg-purple-400/50 group-hover:animate-ping" style={{ animationDelay: '0.5s' }}></div>
             </div>
-            <h3 className="text-xl font-bold text-blue-300">{selectedEvent.title}</h3>
-          </div>
-          <p className="text-blue-100/80 mb-6">{selectedEvent.description}</p>
-          <div className="flex justify-end gap-3">
-            <button
-              className="px-4 py-2 bg-blue-600/30 hover:bg-blue-600/50 rounded-lg
-                         text-blue-300 transition-colors"
-              onClick={() => setSelectedEvent(null)}
-            >
-              Close
-            </button>
-            <button
-              className="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600
-                         hover:from-blue-700 hover:to-purple-700 rounded-lg text-white"
-              onClick={() => {/* Registration logic */}}
-            >
-              Register
-            </button>
-          </div>
+          ))}
         </div>
-      </motion.div>
-    )}
-  </AnimatePresence>
-</div>
+
+        {/* About Section - Add after the Events section */}
+        <section className="relative z-10 px-6 py-20 bg-gradient-to-b from-blue-900/10 to-transparent">
+          <div className="max-w-6xl mx-auto">
+            <h2 className={`text-4xl text-center md:text-5xl font-extrabold mb-12 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 ${anta.className} tracking-wider`}>
+              About Texperia
+            </h2>
+            
+            <div className="grid md:grid-cols-2 gap-10 items-center">
+              <motion.div 
+                initial={{ opacity: 0, x: -50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.7 }}
+                className="relative"
+              >
+                <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl blur-xl opacity-30"></div>
+                <div className="relative bg-gradient-to-br from-blue-900/50 to-purple-900/50 rounded-xl p-6 border border-blue-500/30 backdrop-blur-md">
+                  <p className="text-lg text-blue-100 mb-6 leading-relaxed">
+                    Texperia is a national-level technical symposium that brings together brilliant minds from across the country to showcase innovation, technical prowess, and creative solutions to real-world problems.
+                  </p>
+                  <p className="text-lg text-blue-100 mb-6 leading-relaxed">
+                    First launched in 2018, our symposium has grown to become one of the most anticipated technical festivals in the region, attracting over 5,000 participants annually from more than 200 educational institutions.
+                  </p>
+                  <div className="grid grid-cols-2 gap-4 mt-8">
+                    <div className="text-center">
+                      <div className="text-4xl font-bold text-blue-300 mb-2">5000+</div>
+                      <div className="text-blue-200">Participants</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-4xl font-bold text-blue-300 mb-2">200+</div>
+                      <div className="text-blue-200">Institutions</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-4xl font-bold text-purple-300 mb-2">30+</div>
+                      <div className="text-purple-200">Events</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-4xl font-bold text-purple-300 mb-2">₹5L+</div>
+                      <div className="text-purple-200">Prize Pool</div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+              
+              <motion.div
+                initial={{ opacity: 0, x: 50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.7 }}
+                className="relative aspect-video"
+              >
+                {/* Replace with your own teaser video */}
+                <div className="absolute -inset-1 bg-gradient-to-r from-purple-500 to-blue-500 rounded-xl blur-xl opacity-30"></div>
+                <div className="relative h-full w-full rounded-xl overflow-hidden border border-purple-500/30">
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+                    <div className="w-20 h-20 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center cursor-pointer hover:scale-105 transition-transform">
+                      <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+
+        {/* Registration & Countdown Section */}
+        <section className="relative z-10 px-6 py-20">
+          <div className="max-w-6xl mx-auto relative">
+            <div className="absolute -inset-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl blur-xl opacity-20"></div>
+            <div className="relative bg-gradient-to-br from-blue-900/30 to-purple-900/30 rounded-xl p-8 md:p-12 border border-blue-500/30 backdrop-blur-sm">
+              <h2 className={`text-4xl text-center md:text-5xl font-extrabold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-purple-400 to-pink-300 ${anta.className} tracking-wider`}>
+                Register Now
+              </h2>
+                {/* Countdown Timer */}
+                {(() => {
+                const targetDate = new Date('2025-03-15T09:00:00').getTime();
+                const [timeLeft, setTimeLeft] = useState({
+                  days: 0,
+                  hours: 0,
+                  minutes: 0,
+                  seconds: 0
+                });
+
+                useEffect(() => {
+                  const timer = setInterval(() => {
+                  const now = new Date().getTime();
+                  const distance = targetDate - now;
+
+                  setTimeLeft({
+                    days: Math.floor(distance / (1000 * 60 * 60 * 24)),
+                    hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+                    minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
+                    seconds: Math.floor((distance % (1000 * 60)) / 1000)
+                  });
+
+                  if (distance < 0) {
+                    clearInterval(timer);
+                    setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+                  }
+                  }, 1000);
+
+                  return () => clearInterval(timer);
+                }, []);
+
+                return (
+                  <div className="grid grid-cols-4 gap-4 max-w-lg mx-auto mb-12">
+                  <div className="bg-blue-900/50 border border-blue-500/30 rounded-lg p-4 text-center">
+                    <div className="text-3xl md:text-4xl font-bold text-blue-300">{timeLeft.days}</div>
+                    <div className="text-blue-400 text-sm">Days</div>
+                  </div>
+                  <div className="bg-blue-900/50 border border-blue-500/30 rounded-lg p-4 text-center">
+                    <div className="text-3xl md:text-4xl font-bold text-blue-300">{timeLeft.hours}</div>
+                    <div className="text-blue-400 text-sm">Hours</div>
+                  </div>
+                  <div className="bg-blue-900/50 border border-blue-500/30 rounded-lg p-4 text-center">
+                    <div className="text-3xl md:text-4xl font-bold text-blue-300">{timeLeft.minutes}</div>
+                    <div className="text-blue-400 text-sm">Minutes</div>
+                  </div>
+                  <div className="bg-blue-900/50 border border-blue-500/30 rounded-lg p-4 text-center">
+                    <div className="text-3xl md:text-4xl font-bold text-blue-300">{timeLeft.seconds}</div>
+                    <div className="text-blue-400 text-sm">Seconds</div>
+                  </div>
+                  </div>
+                );
+                })()}
+              {/* Registration Steps */}
+              <div className="grid md:grid-cols-3 gap-6 mb-10">
+                <div className="bg-gradient-to-br from-blue-900/40 to-blue-800/40 rounded-lg border border-blue-500/20 p-6 relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-20 h-20 bg-blue-500/10 rounded-full blur-xl"></div>
+                  <div className="text-3xl font-bold text-blue-300 mb-3">01</div>
+                  <h3 className="text-xl font-semibold text-blue-200 mb-3">Create Account</h3>
+                  <p className="text-blue-100/70">Sign up with your email and verify your student credentials</p>
+                </div>
+                <div className="bg-gradient-to-br from-purple-900/40 to-purple-800/40 rounded-lg border border-purple-500/20 p-6 relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-20 h-20 bg-purple-500/10 rounded-full blur-xl"></div>
+                  <div className="text-3xl font-bold text-purple-300 mb-3">02</div>
+                  <h3 className="text-xl font-semibold text-purple-200 mb-3">Select Events</h3>
+                  <p className="text-purple-100/70">Browse and choose events you want to participate in</p>
+                </div>
+                <div className="bg-gradient-to-br from-pink-900/40 to-pink-800/40 rounded-lg border border-pink-500/20 p-6 relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-20 h-20 bg-pink-500/10 rounded-full blur-xl"></div>
+                  <div className="text-3xl font-bold text-pink-300 mb-3">03</div>
+                  <h3 className="text-xl font-semibold text-pink-200 mb-3">Payment</h3>
+                  <p className="text-pink-100/70">Complete the payment process to confirm your registration</p>
+                </div>
+              </div>
+              
+              <div className="flex justify-center">
+                <button className="px-10 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 rounded-full text-white font-bold text-lg transition-all shadow-lg shadow-blue-500/20 hover:shadow-purple-500/40 transform hover:scale-105">
+                  Register For Texperia
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
       </main>
 
       {/* FAQ Section */}
@@ -711,31 +801,6 @@ export default function Home() {
 
         .font-orbitron {
           font-family: 'Orbitron', sans-serif;
-        }
-
-        .solar-system {
-          position: relative;
-          width: 100%;
-          height: 100vh;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-
-        .orbit {
-          position: absolute;
-          animation: rotate linear infinite;
-        }
-
-        .event-planet {
-          transform-origin: center;
-          cursor: pointer;
-          transition: all 0.3s ease;
-        }
-
-        @keyframes rotate {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
         }
       `}</style>
     </div>
