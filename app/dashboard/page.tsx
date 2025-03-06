@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Anta } from 'next/font/google';
 import Link from 'next/link';
 import { supabase } from '../utils/supabaseClient';
@@ -18,7 +18,18 @@ export default function Dashboard() {
   const [profile, setProfile] = useState<any>(null);
   const [registeredEvents, setRegisteredEvents] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState('events');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const router = useRouter();
+
+  // Generate fixed random positions for circuit nodes (solves hydration error)
+  const circuitNodes = useMemo(() => {
+    return Array.from({ length: 12 }, () => ({
+      top: 15 + Math.random() * 70,
+      left: 15 + Math.random() * 70,
+      animationDelay: Math.random() * 2,
+      animationDuration: 3 + Math.random() * 2
+    }));
+  }, []);
 
   useEffect(() => {
     const checkSession = async () => {
@@ -64,8 +75,60 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
-        <div className="animate-pulse text-2xl text-blue-300">Loading dashboard...</div>
+      <div className="fixed inset-0 bg-black z-50 flex items-center justify-center">
+        {/* Tech circuit background */}
+        <div className="absolute inset-0 overflow-hidden opacity-20">
+          <div className="absolute h-[200%] w-px bg-blue-500/50 left-1/4 animate-tech-line-1"></div>
+          <div className="absolute h-[200%] w-px bg-purple-500/50 left-1/3 animate-tech-line-2"></div>
+          <div className="absolute h-[200%] w-px bg-blue-500/50 left-2/3 animate-tech-line-3"></div>
+          <div className="absolute w-[200%] h-px bg-blue-500/50 top-1/4 animate-tech-line-4"></div>
+          <div className="absolute w-[200%] h-px bg-purple-500/50 top-2/3 animate-tech-line-5"></div>
+          
+          {/* Circuit nodes with pre-generated random values */}
+          {circuitNodes.map((node, i) => (
+            <div 
+              key={i}
+              className="absolute w-2 h-2 rounded-full bg-blue-400/80 animate-pulse-random"
+              style={{ 
+                top: `${node.top}%`, 
+                left: `${node.left}%`,
+                animationDelay: `${node.animationDelay}s`,
+                animationDuration: `${node.animationDuration}s`
+              }}
+            ></div>
+          ))}
+        </div>
+        
+        {/* Center glowing element */}
+        <div className="relative flex flex-col items-center">
+          {/* Outer rings */}
+          <div className="absolute w-40 h-40 rounded-full border border-blue-500/30 animate-spin-slow"></div>
+          <div className="absolute w-48 h-48 rounded-full border border-purple-500/20 animate-reverse-spin"></div>
+          <div className="absolute w-56 h-56 rounded-full border border-blue-500/10 animate-spin-slower"></div>
+          
+          {/* Glowing core */}
+          <div className="relative flex items-center justify-center w-32 h-32">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-purple-600/20 rounded-full blur-md"></div>
+            <div className="absolute inset-2 bg-gradient-to-br from-blue-500/30 to-purple-500/30 rounded-full animate-pulse"></div>
+            <div className="absolute inset-4 bg-gradient-to-br from-blue-400/40 to-purple-400/40 rounded-full blur-sm"></div>
+            
+            {/* Logo */}
+            <h1 className={`relative text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-purple-300 ${anta.className}`}>TEX</h1>
+          </div>
+          
+          {/* Text */}
+          <div className="mt-16 text-center">
+            <div className={`text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 ${anta.className} tracking-wider`}>
+              TEXPERIA
+            </div>
+            <div className="mt-3 text-blue-300 flex items-center gap-2">
+              <span>Loading</span>
+              <span className="inline-block w-1 h-1 bg-blue-300 rounded-full animate-pulse"></span>
+              <span className="inline-block w-1 h-1 bg-blue-300 rounded-full animate-pulse delay-100"></span>
+              <span className="inline-block w-1 h-1 bg-blue-300 rounded-full animate-pulse delay-200"></span>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -86,7 +149,8 @@ export default function Dashboard() {
             <h1 className={`text-xl font-bold text-blue-300 ${anta.className}`}>TEXPERIA</h1>
           </Link>
           
-          <div className="flex items-center gap-6">
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-6">
             <div className="text-blue-300">
               Welcome, {profile?.name || user?.email}
             </div>
@@ -96,6 +160,49 @@ export default function Dashboard() {
             >
               Logout
             </button>
+          </div>
+          
+          {/* Mobile Menu Button */}
+          <button 
+            onClick={() => setMobileMenuOpen(prev => !prev)} 
+            className="md:hidden text-blue-300"
+          >
+            {mobileMenuOpen ? (
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            ) : (
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
+              </svg>
+            )}
+          </button>
+        </div>
+        
+        {/* Mobile Menu */}
+        <div 
+          className={`md:hidden absolute top-full left-0 w-full bg-black/90 backdrop-blur-md border-b border-blue-500/20 transition-all duration-300 ${
+            mobileMenuOpen ? "max-h-64 opacity-100" : "max-h-0 opacity-0 overflow-hidden"
+          }`}
+        >
+          <div className="px-6 py-4 flex flex-col gap-4">
+            <div className="text-blue-300 border-b border-blue-500/20 pb-2">
+              Welcome, {profile?.name || user?.email}
+            </div>
+            <div className="flex flex-col gap-3 mb-2">
+              <Link href="/" className="text-blue-300 hover:text-blue-200 py-2">
+                Home
+              </Link>
+              <Link href="/events" className="text-blue-300 hover:text-blue-200 py-2">
+                Events
+              </Link>
+              <button 
+                onClick={handleLogout}
+                className="text-left text-blue-300 hover:text-blue-200 py-2"
+              >
+                Logout
+              </button>
+            </div>
           </div>
         </div>
       </nav>

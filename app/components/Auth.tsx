@@ -31,6 +31,7 @@ export default function Auth({ initialMode = 'login' }: AuthProps) {
         
         if (error) throw error;
         setMessage('Login successful!');
+        window.location.href = '/dashboard'
       } else {
         const { data, error } = await supabase.auth.signUp({
           email,
