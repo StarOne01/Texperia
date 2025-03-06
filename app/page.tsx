@@ -7,6 +7,9 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { TextPlugin } from 'gsap/TextPlugin';
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
+import Auth from './components/Auth';
+import Dashboard from './components/Dashboard';
+import { supabase } from './utils/supabaseClient';
 
 // Register GSAP plugins
 if (typeof window !== 'undefined') {
@@ -141,6 +144,13 @@ const faqs = [
 
 export default function Home() {
   const [selectedEvent, setSelectedEvent] = useState<typeof events[0] | null>(null);
+  const [user, setUser] = useState<any>(null);
+  const [timeLeft, setTimeLeft] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0
+  });
   const headerRef = useRef(null);
   const eventsRef = useRef<HTMLDivElement>(null);
   const circuitRef = useRef<SVGSVGElement>(null);
@@ -162,6 +172,8 @@ export default function Home() {
         ease: "power2.out"
       });
     }
+
+    
 
     // Move electrons toward mouse position
     electronRefs.current.forEach(electron => {
@@ -261,11 +273,108 @@ export default function Home() {
     };
   }, []);
 
+  useEffect(() => {
+    const targetDate = new Date('2025-03-15T09:00:00').getTime();
+    
+    const timer = setInterval(() => {
+      const now = new Date().getTime();
+      const distance = targetDate - now;
+
+      setTimeLeft({
+        days: Math.floor(distance / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+        minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
+        seconds: Math.floor((distance % (1000 * 60)) / 1000)
+      });
+
+      if (distance < 0) {
+        clearInterval(timer);
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+      }
+    }, 1000);
+    
+    // Auth state check
+    const checkUser = async () => {
+      try {
+        const { data } = await supabase.auth.getUser();
+        setUser(data.user);
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      }
+    };
+    
+    checkUser();
+    
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setUser(session?.user ?? null);
+      }
+    );
+
+    return () => {
+      clearInterval(timer);
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
+
   return (
     <div
       className="relative min-h-screen bg-black text-white overflow-hidden"
       onMouseMove={handleMouseMove}
     >
+      <nav className="fixed top-0 w-full z-50 px-6 py-4 backdrop-blur-md bg-black/40 border-b border-blue-500/20">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
+          {/* Logo */}
+          <div className="flex items-center">
+            <h1 className={`text-xl font-bold text-blue-300 ${anta.className}`}>TEXPERIA</h1>
+          </div>
+          
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-8">
+            <a href="#" className="text-blue-200 hover:text-blue-300 transition-colors">Home</a>
+            <a href="#events" className="text-blue-200 hover:text-blue-300 transition-colors">Events</a>
+            <a href="#about" className="text-blue-200 hover:text-blue-300 transition-colors">About</a>
+            <a href="#faq" className="text-blue-200 hover:text-blue-300 transition-colors">FAQ</a>
+            
+            {/* Auth Button */}
+            {user ? (
+      <a 
+        href="/dashboard" 
+        className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 px-4 py-2 rounded-lg text-white"
+      >
+        Dashboard
+      </a>
+    ) : (
+      <>
+        <a 
+          href="/login" 
+          className="px-4 py-2 text-blue-200 hover:text-blue-100 transition-colors"
+        >
+          Login
+        </a>
+        <a 
+          href="/register" 
+          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 px-4 py-2 rounded-lg text-white"
+        >
+          Register
+        </a>
+      </>
+    )}
+          </div>
+          
+          {/* Mobile Menu Button */}
+          <div className="md:hidden">
+            <button className="text-blue-300 hover:text-blue-200">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* Add padding to the header to account for the fixed navbar */}
+      <div className="h-16"></div>
       <Head>
         <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet" />
       </Head>
@@ -346,38 +455,7 @@ export default function Home() {
           {/* Add countdown timer here */}
           <div className="mt-8 mb-6">
             <p className="text-blue-300 mb-3">Event Starts In:</p>
-            {(() => {
-              const targetDate = new Date('2025-03-15T09:00:00').getTime();
-              const [timeLeft, setTimeLeft] = useState({
-                days: 0,
-                hours: 0,
-                minutes: 0,
-                seconds: 0
-              });
-
-              useEffect(() => {
-                const timer = setInterval(() => {
-                  const now = new Date().getTime();
-                  const distance = targetDate - now;
-
-                  setTimeLeft({
-                    days: Math.floor(distance / (1000 * 60 * 60 * 24)),
-                    hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-                    minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
-                    seconds: Math.floor((distance % (1000 * 60)) / 1000)
-                  });
-
-                  if (distance < 0) {
-                    clearInterval(timer);
-                    setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-                  }
-                }, 1000);
-
-                return () => clearInterval(timer);
-              }, []);
-
-              return (
-                <div className="grid grid-cols-4 gap-3 max-w-md mx-auto backdrop-blur-sm bg-black/20 rounded-xl p-4">
+            <div className="grid grid-cols-4 gap-3 max-w-md mx-auto backdrop-blur-sm bg-black/20 rounded-xl p-4">
                   <div className="bg-blue-900/50 border border-blue-500/30 rounded-lg p-3 text-center">
                     <div className="text-2xl md:text-3xl font-bold text-blue-300">{timeLeft.days}</div>
                     <div className="text-blue-400 text-xs">Days</div>
@@ -395,22 +473,21 @@ export default function Home() {
                     <div className="text-blue-400 text-xs">Seconds</div>
                   </div>
                 </div>
-              );
-            })()}
           </div>
           
           {/* Replace your existing buttons with these */}
           <div className="mt-6 flex gap-4">
-            <button 
-              className="px-8 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 rounded-full text-white font-bold transition-all shadow-lg shadow-blue-500/20 hover:shadow-purple-500/40 transform hover:scale-105"
-            >
-              <span className="flex items-center gap-2">
-                <span>Register Now</span>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </span>
-            </button>
+          <a 
+  href="/register"
+  className="px-8 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 rounded-full text-white font-bold transition-all shadow-lg shadow-blue-500/20 hover:shadow-purple-500/40 transform hover:scale-105"
+>
+  <span className="flex items-center gap-2">
+    <span>Register Now</span>
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+    </svg>
+  </span>
+</a>
             <button 
               className="px-8 py-4 bg-transparent border-2 border-blue-500/30 hover:border-purple-500/50 rounded-full text-blue-300 hover:text-purple-300 font-bold transition-all transform hover:scale-105 backdrop-blur-sm"
             >
@@ -669,99 +746,7 @@ export default function Home() {
                   </div>
                 </div>
               </motion.div>
-              
-            </div>
-          </div>
-        </section>
-
-        {/* Registration & Countdown Section */}
-        <section className="relative z-10 px-6 py-20">
-          <div className="max-w-6xl mx-auto relative">
-            <div className="absolute -inset-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl blur-xl opacity-20"></div>
-            <div className="relative bg-gradient-to-br from-blue-900/30 to-purple-900/30 rounded-xl p-8 md:p-12 border border-blue-500/30 backdrop-blur-sm">
-              <h2 className={`text-4xl text-center md:text-5xl font-extrabold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-purple-400 to-pink-300 ${anta.className} tracking-wider`}>
-                Register Now
-              </h2>
-                {/* Countdown Timer */}
-                {(() => {
-                const targetDate = new Date('2025-03-15T09:00:00').getTime();
-                const [timeLeft, setTimeLeft] = useState({
-                  days: 0,
-                  hours: 0,
-                  minutes: 0,
-                  seconds: 0
-                });
-
-                useEffect(() => {
-                  const timer = setInterval(() => {
-                  const now = new Date().getTime();
-                  const distance = targetDate - now;
-
-                  setTimeLeft({
-                    days: Math.floor(distance / (1000 * 60 * 60 * 24)),
-                    hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-                    minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
-                    seconds: Math.floor((distance % (1000 * 60)) / 1000)
-                  });
-
-                  if (distance < 0) {
-                    clearInterval(timer);
-                    setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-                  }
-                  }, 1000);
-
-                  return () => clearInterval(timer);
-                }, []);
-
-                return (
-                  <div className="grid grid-cols-4 gap-4 max-w-lg mx-auto mb-12">
-                  <div className="bg-blue-900/50 border border-blue-500/30 rounded-lg p-4 text-center">
-                    <div className="text-3xl md:text-4xl font-bold text-blue-300">{timeLeft.days}</div>
-                    <div className="text-blue-400 text-sm">Days</div>
-                  </div>
-                  <div className="bg-blue-900/50 border border-blue-500/30 rounded-lg p-4 text-center">
-                    <div className="text-3xl md:text-4xl font-bold text-blue-300">{timeLeft.hours}</div>
-                    <div className="text-blue-400 text-sm">Hours</div>
-                  </div>
-                  <div className="bg-blue-900/50 border border-blue-500/30 rounded-lg p-4 text-center">
-                    <div className="text-3xl md:text-4xl font-bold text-blue-300">{timeLeft.minutes}</div>
-                    <div className="text-blue-400 text-sm">Minutes</div>
-                  </div>
-                  <div className="bg-blue-900/50 border border-blue-500/30 rounded-lg p-4 text-center">
-                    <div className="text-3xl md:text-4xl font-bold text-blue-300">{timeLeft.seconds}</div>
-                    <div className="text-blue-400 text-sm">Seconds</div>
-                  </div>
-                  </div>
-                );
-                })()}
-              {/* Registration Steps */}
-              <div className="grid md:grid-cols-3 gap-6 mb-10">
-                <div className="bg-gradient-to-br from-blue-900/40 to-blue-800/40 rounded-lg border border-blue-500/20 p-6 relative overflow-hidden">
-                  <div className="absolute top-0 right-0 w-20 h-20 bg-blue-500/10 rounded-full blur-xl"></div>
-                  <div className="text-3xl font-bold text-blue-300 mb-3">01</div>
-                  <h3 className="text-xl font-semibold text-blue-200 mb-3">Create Account</h3>
-                  <p className="text-blue-100/70">Sign up with your email and verify your student credentials</p>
-                </div>
-                <div className="bg-gradient-to-br from-purple-900/40 to-purple-800/40 rounded-lg border border-purple-500/20 p-6 relative overflow-hidden">
-                  <div className="absolute top-0 right-0 w-20 h-20 bg-purple-500/10 rounded-full blur-xl"></div>
-                  <div className="text-3xl font-bold text-purple-300 mb-3">02</div>
-                  <h3 className="text-xl font-semibold text-purple-200 mb-3">Select Events</h3>
-                  <p className="text-purple-100/70">Browse and choose events you want to participate in</p>
-                </div>
-                <div className="bg-gradient-to-br from-pink-900/40 to-pink-800/40 rounded-lg border border-pink-500/20 p-6 relative overflow-hidden">
-                  <div className="absolute top-0 right-0 w-20 h-20 bg-pink-500/10 rounded-full blur-xl"></div>
-                  <div className="text-3xl font-bold text-pink-300 mb-3">03</div>
-                  <h3 className="text-xl font-semibold text-pink-200 mb-3">Payment</h3>
-                  <p className="text-pink-100/70">Complete the payment process to confirm your registration</p>
-                </div>
               </div>
-              
-              <div className="flex justify-center">
-                <button className="px-10 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 rounded-full text-white font-bold text-lg transition-all shadow-lg shadow-blue-500/20 hover:shadow-purple-500/40 transform hover:scale-105">
-                  Register For Texperia
-                </button>
-              </div>
-            </div>
           </div>
         </section>
 
@@ -794,8 +779,60 @@ export default function Home() {
         </div>
       </div>
 
-      <footer className="relative z-10 py-8 mt-20 border-t border-blue-900/30 text-center text-blue-300/70">
-        <p>TECHXPERIA © {new Date().getFullYear()} | Where Technology Meets Imagination</p>
+      {/* Update the footer with coordinator contacts */}
+      <footer className="relative z-10 py-16 border-t border-blue-900/30 bg-gradient-to-b from-transparent to-blue-950/50">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
+            <div>
+              <h3 className={`text-2xl font-bold mb-4 text-blue-300 ${anta.className}`}>TEXPERIA</h3>
+              <p className="text-blue-200/70 mb-6">Where technology meets imagination. Join us for an electrifying celebration of innovation and engineering excellence.</p>
+              <div className="flex gap-4">
+                <a href="#" className="w-8 h-8 rounded-full bg-blue-900/50 flex items-center justify-center hover:bg-blue-800/70 transition-colors">
+                  <span>📘</span>
+                </a>
+                <a href="#" className="w-8 h-8 rounded-full bg-blue-900/50 flex items-center justify-center hover:bg-blue-800/70 transition-colors">
+                  <span>📸</span>
+                </a>
+                <a href="#" className="w-8 h-8 rounded-full bg-blue-900/50 flex items-center justify-center hover:bg-blue-800/70 transition-colors">
+                  <span>📺</span>
+                </a>
+                <a href="#" className="w-8 h-8 rounded-full bg-blue-900/50 flex items-center justify-center hover:bg-blue-800/70 transition-colors">
+                  <span>🐦</span>
+                </a>
+              </div>
+            </div>
+            
+            <div>
+              <h3 className="text-xl font-bold mb-4 text-blue-300">Quick Links</h3>
+              <ul className="space-y-2">
+                <li><a href="#" className="text-blue-200/70 hover:text-blue-300 transition-colors">Home</a></li>
+                <li><a href="#" className="text-blue-200/70 hover:text-blue-300 transition-colors">About</a></li>
+                <li><a href="#" className="text-blue-200/70 hover:text-blue-300 transition-colors">Events</a></li>
+                <li><a href="#" className="text-blue-200/70 hover:text-blue-300 transition-colors">Speakers</a></li>
+                <li><a href="#" className="text-blue-200/70 hover:text-blue-300 transition-colors">Register</a></li>
+                <li><a href="#" className="text-blue-200/70 hover:text-blue-300 transition-colors">Contact</a></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="text-xl font-bold mb-4 text-blue-300">Contact Coordinators</h3>
+              <ul className="space-y-2">
+                <li>
+                  <p className="text-blue-200/70">Abishek</p>
+                  <p className="text-blue-200/50 text-sm">+91 90038 94744</p>
+                  <p className="text-blue-200/50 text-sm">@snsct.org</p>
+                </li>
+                <li>
+                  <p className="text-blue-200/70">Jane Smith</p>
+                  <p className="text-blue-200/50 text-sm">+1 987 654 321</p>
+                  <p className="text-blue-200/50 text-sm">jane.smith@example.com</p>
+                </li>
+              </ul>
+            </div>
+          </div>
+          
+          <p className="text-center text-blue-300/70">TECHXPERIA © {new Date().getFullYear()} | Where Technology Meets Imagination</p>
+        </div>
       </footer>
 
       {/* CSS for electrical elements */}
