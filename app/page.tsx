@@ -294,7 +294,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const targetDate = new Date("2025-03-15T09:00:00").getTime();
+    const targetDate = new Date("2025-03-19T09:00:00").getTime();
 
     const timer = setInterval(() => {
       const now = new Date().getTime();
@@ -611,7 +611,7 @@ export default function Home() {
               </a>
             )}
 
-            <button className="px-8 py-4 bg-transparent border-2 border-blue-500/30 hover:border-purple-500/50 rounded-full text-blue-300 hover:text-purple-300 font-bold transition-all transform hover:scale-105 backdrop-blur-sm">
+            <button onClick={()=> window.location.href='#events'} className="px-8 py-4 bg-transparent border-2 border-blue-500/30 hover:border-purple-500/50 rounded-full text-blue-300 hover:text-purple-300 font-bold transition-all transform hover:scale-105 backdrop-blur-sm">
               <span className="flex items-center gap-2">
                 <span>Explore Events</span>
                 <svg
@@ -812,7 +812,7 @@ export default function Home() {
               ></div>
 
               {/* Event content */}
-              <div className="relative z-10">
+              <div id="events" className="relative z-10">
                 <div
                   className="w-16 h-16 mb-4 rounded-lg flex items-center justify-center"
                   style={{ background: `${event.color}30` }}
@@ -854,7 +854,7 @@ export default function Home() {
         </div>
 
         {/* About Section - Add after the Events section */}
-        <section className="relative z-10 px-6 py-20 bg-gradient-to-b from-blue-900/10 to-transparent">
+        <section id="about" className="relative z-10 px-6 py-20 bg-gradient-to-b from-blue-900/10 to-transparent">
           <div className="max-w-6xl mx-auto">
             <h2
               className={`text-4xl text-center md:text-5xl font-extrabold mb-12 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 ${anta.className} tracking-wider`}
@@ -944,7 +944,7 @@ export default function Home() {
       </main>
 
       {/* FAQ Section */}
-      <div className="relative z-10 px-6 py-16 bg-gradient-to-b from-transparent to-blue-900/20">
+      <div id="faq" className="relative z-10 px-6 py-16 bg-gradient-to-b from-transparent to-blue-900/20">
         <h2
           className={`text-4xl text-center md:text-5xl font-extrabold mb-12 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 ${anta.className} tracking-wider`}
         >

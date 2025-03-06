@@ -33,7 +33,9 @@ const events = [
       "Judgement based on innovation, clarity, and technical depth"
     ],
     coordinators: [
-      { name: "Dr. Priya Singh", email: "priya@texperia.org" }
+      { name: "Mr. James", phone: "+917598813368" },
+      { name: "Ms. Keerthana", phone: "+916369306410" }
+
     ]
   },
   {
@@ -54,7 +56,7 @@ const events = [
       "Judge's decision is final"
     ],
     coordinators: [
-      { name: "Prof. Akash Verma", email: "akash@texperia.org" }
+      { name: "Prof. Akash Verma", phone: "akash@texperia.org" }
     ]
   },
   {
@@ -75,7 +77,7 @@ const events = [
       "Solutions evaluated on innovation, technical complexity, and practicality"
     ],
     coordinators: [
-      { name: "Rahul Sharma", email: "rahul@texperia.org" }
+      { name: "Rahul Sharma", phone: "rahul@texperia.org" }
     ]
   },
   {
@@ -96,7 +98,7 @@ const events = [
       "Judging based on innovation, execution, and potential impact"
     ],
     coordinators: [
-      { name: "Sneha Patel", email: "sneha@texperia.org" }
+      { name: "Sneha Patel", phone: "sneha@texperia.org" }
     ]
   },
   {
@@ -117,7 +119,7 @@ const events = [
       "Judging based on functionality, design, and innovation"
     ],
     coordinators: [
-      { name: "Arjun Mehta", email: "arjun@texperia.org" }
+      { name: "Arjun Mehta", phone: "arjun@texperia.org" }
     ]
   },
   {
@@ -138,7 +140,7 @@ const events = [
       "Judging based on content clarity, visual appeal, and technical depth"
     ],
     coordinators: [
-      { name: "Meera Kapoor", email: "meera@texperia.org" }
+      { name: "Meera Kapoor", phone: "meera@texperia.org" }
     ]
   },
   {
@@ -159,7 +161,7 @@ const events = [
       "Judging based on accuracy and time taken"
     ],
     coordinators: [
-      { name: "Dr. Vijay Kumar", email: "vijay@texperia.org" }
+      { name: "Dr. Vijay Kumar", phone: "vijay@texperia.org" }
     ]
   },
   {
@@ -180,7 +182,7 @@ const events = [
       "Judging based on creativity, technical accuracy, and execution"
     ],
     coordinators: [
-      { name: "Neha Sharma", email: "neha@texperia.org" }
+      { name: "Neha Sharma", phone: "neha@texperia.org" }
     ]
   },
   {
@@ -201,7 +203,7 @@ const events = [
       "Recording permitted only with prior permission"
     ],
     coordinators: [
-      { name: "Amit Singh", email: "amit@texperia.org" }
+      { name: "Amit Singh", phone: "amit@texperia.org" }
     ]
   },
   {
@@ -222,7 +224,7 @@ const events = [
       "Prior knowledge requirements vary by workshop"
     ],
     coordinators: [
-      { name: "Divya Reddy", email: "divya@texperia.org" }
+      { name: "Divya Reddy", phone: "divya@texperia.org" }
     ]
   },
   {
@@ -244,7 +246,7 @@ const events = [
       "Judging based on clarity of message, creativity, and execution"
     ],
     coordinators: [
-      { name: "Pradeep Nair", email: "pradeep@texperia.org" }
+      { name: "Pradeep Nair", phone: "pradeep@texperia.org" }
     ]
   }
 ];
@@ -547,12 +549,12 @@ export default function Events() {
                 </div>
                 
                 <div>
-                  <h3 className="text-xl font-semibold text-blue-300 mb-3">Coordinators</h3>
+                  <h3 className="text-xl font-semibold text-blue-300 mb-3">Student Coordinators</h3>
                   <div className="space-y-3">
                     {selectedEvent.coordinators.map((coordinator, idx) => (
                       <div key={idx} className="flex flex-col">
                         <div className="text-blue-200 font-medium">{coordinator.name}</div>
-                        <div className="text-blue-400 text-sm">{coordinator.email}</div>
+                        <div className="text-blue-400 text-sm">{coordinator.phone}</div>
                       </div>
                     ))}
                   </div>
