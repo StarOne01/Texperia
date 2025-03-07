@@ -12,21 +12,19 @@ export default function Dashboard() {
     // Get the current user
     const fetchUser = async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
-        setUser(user);
+        const { data } = await supabase.auth.getUser();
+        setUser(data.user);
         
-        if (user) {
+        if (user.id) {
           // Fetch the user's registered events
           const { data, error } = await supabase
           .from('event_registrations')
-          .select('event_id')
+          .select('event_ids')
           .eq('user_id', user.id);
           
-            console.log(user.id)
-            
+                      
           if (error) throw error;
-          setRegisteredEvents(data || []);
-          console.log(data)
+          setRegisteredEvents(data[0].event_ids || []);
         }
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -106,7 +104,7 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {registeredEvents.map((registration) => (
             <motion.div
-              key={registration.id}
+              key={registration}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}

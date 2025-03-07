@@ -289,11 +289,40 @@ export default function Events() {
   const fetchRegisteredEvents = async (userId: string) => {
     const { data, error } = await supabase
       .from('event_registrations')
-      .select('event_id')
+      .select('event_ids')
       .eq('user_id', userId);
       
     if (data) {
-      setRegisteredEvents(data.map(item => item.event_id));
+      setRegisteredEvents(data[0].event_ids);
+    }
+  };
+
+    const handleUnregister = async (eventId: number) => {
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+  
+    try {
+      // Filter out the event ID from the registered events array
+      const updatedEvents = registeredEvents.filter(id => id !== eventId);
+      
+      // Update the database
+      const { data, error } = await supabase
+        .from('event_registrations')
+        .update({ 
+          event_ids: updatedEvents,
+          status: updatedEvents.length === 0 ? 'inactive' : 'registered', 
+        })
+        .match({ user_id: user.id });
+        
+      if (error) throw error;
+      
+      // Update the local state
+      setRegisteredEvents(updatedEvents);
+      
+    } catch (error) {
+      console.error("Error removing event registration:", error);
     }
   };
 
@@ -305,16 +334,17 @@ export default function Events() {
 
     try {
       const { data, error } = await supabase
-        .from('event_registrations')
-        .insert([
-          { user_id: user.id, event_id: eventId, status: 'registered' }
-        ]);
-        
+              .from('event_registrations')
+              .update({ 
+                event_ids: Array.from(new Set([...registeredEvents,eventId])), 
+                status: 'registered', 
+                email: user.email 
+              })
+              .match({ user_id: user.id });
       if (error) throw error;
       
       setRegisteredEvents([...registeredEvents, eventId]);
     } catch (error) {
-      console.error('Error registering for event:', error);
     }
   };
 
@@ -345,10 +375,10 @@ export default function Events() {
     const counts = countRegisteredEventsByCategory();
     
     if (eventCategory === 'flagship') {
-      return counts.flagship < 1;
+      return counts.flagship < 1 && counts.nonTechnical + counts.technical < 2;
     } else {
       // For technical and non-technical combined, limit is 2
-      return counts.technical + counts.nonTechnical < 2;
+      return counts.flagship + counts.technical + counts.nonTechnical < 2;
     }
   };
 
@@ -618,7 +648,7 @@ export default function Events() {
                   
                   {/* Replace the existing registration button code in the event card */}
                   {registeredEvents.includes(event.id) ? (
-                    <button
+                    <button onClick={()=>handleUnregister(event.id)}
                       className="flex-1 px-4 py-2 bg-green-900/20 border border-green-500/30 rounded-lg text-green-400 text-sm font-medium cursor-default"
                     >
                       Registered
