@@ -18,22 +18,15 @@ export default function Dashboard() {
         if (user) {
           // Fetch the user's registered events
           const { data, error } = await supabase
-            .from('event_registrations')
-            .select(`
-              id,
-              created_at,
-              events (
-                id,
-                title,
-                description,
-                date,
-                location
-              )
-            `)
-            .eq('user_id', user.id);
+          .from('event_registrations')
+          .select('event_id')
+          .eq('user_id', user.id);
+          
+            console.log(user.id)
             
           if (error) throw error;
           setRegisteredEvents(data || []);
+          console.log(data)
         }
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -119,7 +112,7 @@ export default function Dashboard() {
               transition={{ duration: 0.3 }}
               className="bg-blue-900/20 rounded-lg p-4 border border-blue-500/20 hover:border-blue-400/40 transition-colors"
             >
-              <h4 className="text-lg font-medium text-blue-300">{registration.events.title}</h4>
+              <h4 className="text-lg font-medium text-blue-300">{registration.id}</h4>
               <p className="text-sm text-blue-100 mb-2">{registration.events.description}</p>
               <div className="flex justify-between text-xs text-blue-400">
                 <span>Date: {new Date(registration.events.date).toLocaleDateString()}</span>

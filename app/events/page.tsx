@@ -8,6 +8,8 @@ import { supabase } from '../utils/supabaseClient';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
+import paper from '../../public/paper.png'
+
 const anta = Anta({
   weight: '400',
   subsets: ['latin'],
@@ -19,13 +21,14 @@ const events = [
     id: 1,
     title: "Paper Presentation",
     description: "Present your research papers and innovative ideas to experts in the field. Showcase your technical knowledge and research skills through well-structured presentations.",
-    icon: "/icons/paper.svg",
+    icon: paper,
     color: "#4fd1c5",
     date: "March 15, 2025",
     time: "10:00 AM - 2:00 PM",
     venue: "Main Auditorium",
     prizes: "₹10,000",
     teamSize: "1-2 members",
+    category: "technical",
     rules: [
       "Submit abstract before February 15, 2025",
       "Presentation duration: 10 minutes",
@@ -35,7 +38,6 @@ const events = [
     coordinators: [
       { name: "Mr. James", phone: "+917598813368" },
       { name: "Ms. Keerthana", phone: "+916369306410" }
-
     ]
   },
   {
@@ -49,6 +51,7 @@ const events = [
     venue: "Seminar Hall B",
     prizes: "₹8,000",
     teamSize: "2 members",
+    category: "technical",
     rules: [
       "Multiple rounds including rapid fire, buzzer, and visual rounds",
       "Team elimination after each round",
@@ -70,6 +73,7 @@ const events = [
     venue: "Innovation Hub",
     prizes: "₹15,000",
     teamSize: "3-4 members",
+    category: "flagship",
     rules: [
       "Teams must develop solutions aligned with provided themes",
       "All code must be written during the event",
@@ -91,6 +95,7 @@ const events = [
     venue: "Exhibition Hall",
     prizes: "₹12,000",
     teamSize: "1-4 members",
+    category: "flagship",
     rules: [
       "Projects must be original work of the participants",
       "Physical demonstration preferred but not mandatory",
@@ -105,13 +110,14 @@ const events = [
     id: 5,
     title: "Rapid Prototype Challenge",
     description: "Design, build and demonstrate a working prototype within a limited timeframe. Test your quick thinking and hands-on skills in this exciting time-bound challenge.",
-    icon: "/icons/prototype.svg",
+    icon: "/public/prototype.svg",
     color: "#285e61",
     date: "March 15, 2025",
     time: "10:00 AM - 4:00 PM",
     venue: "Workshop Area",
     prizes: "₹10,000",
     teamSize: "2-3 members",
+    category: "technical",
     rules: [
       "Materials will be provided at the venue",
       "6 hours to complete the prototype",
@@ -133,6 +139,7 @@ const events = [
     venue: "Gallery Hall",
     prizes: "₹5,000",
     teamSize: "1-2 members",
+    category: "non-technical",
     rules: [
       "Poster size: A1 (594 x 841 mm)",
       "Content must be original and technically accurate",
@@ -154,6 +161,7 @@ const events = [
     venue: "Electronics Lab",
     prizes: "₹7,000",
     teamSize: "2 members",
+    category: "technical",
     rules: [
       "Teams will receive faulty circuits to debug",
       "Limited time per circuit (30 minutes)",
@@ -175,6 +183,7 @@ const events = [
     venue: "Design Studio",
     prizes: "₹5,000",
     teamSize: "1 member",
+    category: "non-technical",
     rules: [
       "Topic will be provided on the spot",
       "3 hours to complete the sketch",
@@ -196,6 +205,7 @@ const events = [
     venue: "Conference Hall",
     prizes: "Certificate of Participation",
     teamSize: "Individual Registration",
+    category: "non-technical",
     rules: [
       "Pre-registration required due to limited seating",
       "Questions must be submitted in advance",
@@ -217,6 +227,7 @@ const events = [
     venue: "Multiple Locations",
     prizes: "Certificate of Completion",
     teamSize: "Individual Registration",
+    category: "non-technical",
     rules: [
       "Separate registration required for each workshop",
       "Materials will be provided",
@@ -238,6 +249,7 @@ const events = [
     venue: "Open Air Theater",
     prizes: "₹6,000",
     teamSize: "3-5 members",
+    category: "non-technical",
     rules: [
       "Performance duration: 5-7 minutes",
       "No dialogues allowed",
@@ -258,6 +270,7 @@ export default function Events() {
   const [user, setUser] = useState<any>(null);
   const [registeredEvents, setRegisteredEvents] = useState<number[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('all');
   const router = useRouter();
 
   useEffect(() => {
@@ -305,22 +318,83 @@ export default function Events() {
     }
   };
 
+  // Add these functions in the Events component before the return statement
+
+  // Count how many events of each category the user has registered for
+  const countRegisteredEventsByCategory = () => {
+    const counts = {
+      flagship: 0,
+      technical: 0,
+      nonTechnical: 0
+    };
+    
+    registeredEvents.forEach(eventId => {
+      const event = events.find(e => e.id === eventId);
+      if (event) {
+        if (event.category === 'flagship') counts.flagship++;
+        else if (event.category === 'technical') counts.technical++;
+        else if (event.category === 'non-technical') counts.nonTechnical++;
+      }
+    });
+    
+    return counts;
+  };
+
+  // Check if user can register for an event of a given category
+  const canRegisterForEvent = (eventCategory: string) => {
+    const counts = countRegisteredEventsByCategory();
+    
+    if (eventCategory === 'flagship') {
+      return counts.flagship < 1;
+    } else {
+      // For technical and non-technical combined, limit is 2
+      return counts.technical + counts.nonTechnical < 2;
+    }
+  };
+
+  // Get an appropriate message explaining why registration is disabled
+  const getRegistrationDisabledReason = (eventCategory: string) => {
+    const counts = countRegisteredEventsByCategory();
+    
+    if (eventCategory === 'flagship' && counts.flagship >= 1) {
+      return "You can register for only 1 flagship event";
+    } else if (counts.technical + counts.nonTechnical >= 2) {
+      return "You can register for only 2 technical/non-technical events combined";
+    }
+    
+    return "";
+  };
+
   const openEventDetails = (event: typeof events[0]) => {
     setSelectedEvent(event);
     setIsModalOpen(true);
   };
 
   const filteredEvents = events.filter(event => {
+    // Text search filter
     const matchesSearch = event.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           event.description.toLowerCase().includes(searchQuery.toLowerCase());
     
-    if (filterCategory === 'all') {
-      return matchesSearch;
-    }
+    // Category filter
+    const matchesCategory = 
+      activeTab === 'all' || 
+      event.category === activeTab;
     
-    // Here you would add logic to filter by category if categories were defined
-    return matchesSearch;
+    return matchesSearch && matchesCategory;
   });
+  
+  const getCategoryInfo = (category: string) => {
+    switch (category) {
+      case 'flagship':
+        return { label: 'Flagship Event', color: 'from-purple-600 to-pink-600' };
+      case 'technical':
+        return { label: 'Technical Event', color: 'from-blue-600 to-cyan-600' };
+      case 'non-technical':
+        return { label: 'Non-Technical Event', color: 'from-green-600 to-teal-600' };
+      default:
+        return { label: 'Event', color: 'from-gray-600 to-gray-600' };
+    }
+  };
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -371,7 +445,53 @@ export default function Events() {
           Discover a wide range of technical events designed to challenge your skills, expand your knowledge, and connect with like-minded tech enthusiasts. Register now to participate!
         </p>
 
-        {/* Search and Filter */}
+        {/* Category Tabs */}
+        <div className="mb-8">
+          <div className="flex flex-wrap justify-center gap-2 md:gap-4">
+            <button
+              onClick={() => setActiveTab('all')}
+              className={`px-4 py-2 rounded-full transition-colors ${
+                activeTab === 'all' 
+                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white' 
+                  : 'bg-blue-900/30 text-blue-300 hover:bg-blue-800/40'
+              }`}
+            >
+              All Events
+            </button>
+            <button
+              onClick={() => setActiveTab('flagship')}
+              className={`px-4 py-2 rounded-full transition-colors ${
+                activeTab === 'flagship' 
+                  ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white' 
+                  : 'bg-blue-900/30 text-blue-300 hover:bg-blue-800/40'
+              }`}
+            >
+              Flagship Events
+            </button>
+            <button
+              onClick={() => setActiveTab('technical')}
+              className={`px-4 py-2 rounded-full transition-colors ${
+                activeTab === 'technical' 
+                  ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white' 
+                  : 'bg-blue-900/30 text-blue-300 hover:bg-blue-800/40'
+              }`}
+            >
+              Technical Events
+            </button>
+            <button
+              onClick={() => setActiveTab('non-technical')}
+              className={`px-4 py-2 rounded-full transition-colors ${
+                activeTab === 'non-technical' 
+                  ? 'bg-gradient-to-r from-green-600 to-teal-600 text-white' 
+                  : 'bg-blue-900/30 text-blue-300 hover:bg-blue-800/40'
+              }`}
+            >
+              Non-Technical Events
+            </button>
+          </div>
+        </div>
+
+        {/* Search */}
         <div className="mb-10">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-grow">
@@ -388,21 +508,59 @@ export default function Events() {
                 </svg>
               </div>
             </div>
-            
-            <div className="md:w-64">
-              <select
-                className="w-full bg-blue-900/20 border border-blue-500/30 rounded-lg p-3 text-white"
-                value={filterCategory}
-                onChange={(e) => setFilterCategory(e.target.value)}
-              >
-                <option value="all">All Categories</option>
-                <option value="technical">Technical</option>
-                <option value="presentation">Presentation</option>
-                <option value="workshop">Workshops</option>
-              </select>
-            </div>
           </div>
         </div>
+
+        {/* Add this after the search section */}
+        {user && (
+          <div className="mb-8 bg-blue-900/20 border border-blue-500/20 rounded-lg p-4">
+            <h3 className="text-lg font-semibold text-blue-300 mb-3">Your Registration Status</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-blue-900/30 rounded-lg p-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-blue-300">Flagship Events</span>
+                  <span className={`px-2 py-1 rounded-full text-xs ${
+                    countRegisteredEventsByCategory().flagship === 0 
+                      ? 'bg-blue-500/20 text-blue-300' 
+                      : 'bg-green-500/20 text-green-300'
+                  }`}>
+                    {countRegisteredEventsByCategory().flagship}/1
+                  </span>
+                </div>
+              </div>
+              <div className="bg-blue-900/30 rounded-lg p-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-blue-300">Technical Events</span>
+                  <span className={`px-2 py-1 rounded-full text-xs ${
+                    countRegisteredEventsByCategory().technical === 0 
+                      ? 'bg-blue-500/20 text-blue-300' 
+                      : 'bg-green-500/20 text-green-300'
+                  }`}>
+                    {countRegisteredEventsByCategory().technical}
+                  </span>
+                </div>
+              </div>
+              <div className="bg-blue-900/30 rounded-lg p-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-blue-300">Non-Technical Events</span>
+                  <span className={`px-2 py-1 rounded-full text-xs ${
+                    countRegisteredEventsByCategory().nonTechnical === 0 
+                      ? 'bg-blue-500/20 text-blue-300' 
+                      : 'bg-green-500/20 text-green-300'
+                  }`}>
+                    {countRegisteredEventsByCategory().nonTechnical}
+                  </span>
+                </div>
+              </div>
+              <div className="col-span-1 md:col-span-3 text-blue-200/70 text-sm mt-2">
+                <ul className="list-disc list-inside space-y-1">
+                  <li>You can register for maximum 1 flagship event</li>
+                  <li>You can register for maximum 2 events total from technical and non-technical categories combined</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Events Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
@@ -429,12 +587,18 @@ export default function Events() {
                     <Image
                       src={event.icon}
                       alt={event.title}
-                      width={24}
-                      height={24}
+                      width={44}
+                      height={44}
                       className="text-white"
                     />
                   </div>
-                  <div className="text-sm text-blue-300">{event.date}</div>
+                  <div className="flex flex-col items-end gap-2">
+                    {/* Category badge */}
+                    <div className={`text-xs px-2 py-1 rounded-full bg-gradient-to-r ${getCategoryInfo(event.category).color} text-white font-medium`}>
+                      {getCategoryInfo(event.category).label}
+                    </div>
+                    <div className="text-sm text-blue-300">{event.date}</div>
+                  </div>
                 </div>
                 
                 <h3 className="text-xl font-bold mb-2 text-blue-300">{event.title}</h3>
@@ -452,18 +616,34 @@ export default function Events() {
                     View Details
                   </button>
                   
+                  {/* Replace the existing registration button code in the event card */}
                   {registeredEvents.includes(event.id) ? (
                     <button
                       className="flex-1 px-4 py-2 bg-green-900/20 border border-green-500/30 rounded-lg text-green-400 text-sm font-medium cursor-default"
                     >
                       Registered
                     </button>
-                  ) : (
+                  ) : !user ? (
+                    <button
+                      onClick={() => router.push('/login')}
+                      className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 rounded-lg text-white text-sm font-medium"
+                    >
+                      Register
+                    </button>
+                  ) : canRegisterForEvent(event.category) ? (
                     <button
                       onClick={() => handleRegister(event.id)}
                       className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 rounded-lg text-white text-sm font-medium"
                     >
                       Register
+                    </button>
+                  ) : (
+                    <button
+                      disabled
+                      title={getRegistrationDisabledReason(event.category)}
+                      className="flex-1 px-4 py-2 bg-gray-700/50 border border-gray-500/30 rounded-lg text-gray-400 text-sm font-medium cursor-not-allowed"
+                    >
+                      Limit Reached
                     </button>
                   )}
                 </div>
@@ -510,7 +690,12 @@ export default function Events() {
                     height={32}
                   />
                 </div>
-                <h2 className={`text-3xl font-bold text-blue-300 ${anta.className}`}>{selectedEvent.title}</h2>
+                <div>
+                  <h2 className={`text-3xl font-bold text-blue-300 ${anta.className}`}>{selectedEvent.title}</h2>
+                  <div className={`inline-block mt-2 text-xs px-3 py-1 rounded-full bg-gradient-to-r ${getCategoryInfo(selectedEvent.category).color} text-white font-medium`}>
+                    {getCategoryInfo(selectedEvent.category).label}
+                  </div>
+                </div>
               </div>
               
               <div className="grid md:grid-cols-3 gap-6 mb-6">
@@ -578,13 +763,24 @@ export default function Events() {
                   Close
                 </button>
                 
+                {/* Replace the existing registration button in the modal */}
                 {registeredEvents.includes(selectedEvent.id) ? (
                   <button
                     className="px-6 py-3 bg-green-900/20 border border-green-500/30 rounded-lg text-green-400 cursor-default"
                   >
                     Already Registered
                   </button>
-                ) : (
+                ) : !user ? (
+                  <button
+                    onClick={() => {
+                      setIsModalOpen(false);
+                      router.push('/login');
+                    }}
+                    className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 rounded-lg text-white"
+                  >
+                    Login to Register
+                  </button>
+                ) : canRegisterForEvent(selectedEvent.category) ? (
                   <button
                     onClick={() => {
                       handleRegister(selectedEvent.id);
@@ -593,6 +789,14 @@ export default function Events() {
                     className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 rounded-lg text-white"
                   >
                     Register Now
+                  </button>
+                ) : (
+                  <button
+                    disabled
+                    title={getRegistrationDisabledReason(selectedEvent.category)}
+                    className="px-6 py-3 bg-gray-700/50 border border-gray-500/30 rounded-lg text-gray-400 cursor-not-allowed"
+                  >
+                    Registration Limit Reached
                   </button>
                 )}
               </div>
