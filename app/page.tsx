@@ -10,6 +10,7 @@ import { MotionPathPlugin } from "gsap/MotionPathPlugin";
 import Auth from "./components/Auth";
 import Dashboard from "./components/Dashboard";
 import { supabase } from "./utils/supabaseClient";
+import Link from "next/link";
 
 // Register GSAP plugins
 if (typeof window !== "undefined") {
@@ -163,6 +164,7 @@ export default function Home() {
   const [selectedEvent, setSelectedEvent] = useState<(typeof events)[0] | null>(
     null
   );
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
@@ -407,24 +409,91 @@ export default function Home() {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden">
-            <button className="text-blue-300 hover:text-blue-200">
+          <div className="lg:hidden">
+            <button 
+              className="text-blue-300 hover:text-blue-200"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
               <svg
                 className="w-6 h-6"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16m-7 6h7"
-                />
+                {isMobileMenuOpen ? (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                ) : (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16m-7 6h7"
+                  />
+                )}
               </svg>
             </button>
           </div>
         </div>
+        
+        {/* Mobile Menu */}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="lg:hidden absolute top-full left-0 right-0 bg-black/95 backdrop-blur-xl border-b border-blue-500/20 py-4"
+            >
+              <div className="flex flex-col space-y-3 px-6">
+                {["Home", "Events", "About", "Timeline", "FAQ"].map((item) => (
+                  <a
+                    key={item}
+                    href={`#${item.toLowerCase()}`}
+                    className="text-blue-200 hover:text-blue-300 transition-colors py-2"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {item}
+                  </a>
+                ))}
+                
+                <div className="pt-2 border-t border-blue-500/20 mt-2">
+                  {user ? (
+                    <Link
+                      href="/dashboard"
+                      className="block w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-center rounded-lg text-white"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Dashboard
+                    </Link>
+                  ) : (
+                    <div className="flex flex-col gap-3">
+                      <Link
+                        href="/login"
+                        className="block w-full py-3 px-4 border border-blue-500/30 text-center rounded-lg text-blue-300"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        Login
+                      </Link>
+                      <Link
+                        href="/register"
+                        className="block w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-center rounded-lg text-white"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        Register
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        
       </nav>
 
       {/* Add padding to the header to account for the fixed navbar */}
@@ -485,6 +554,7 @@ export default function Home() {
           />
         ))}
       </div>
+      
 
       <main className="z-10 mx-auto">
         {/* Remove the fixed video container from here */}

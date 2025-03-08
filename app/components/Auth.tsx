@@ -43,33 +43,7 @@ export default function Auth({ initialMode = 'login' }: AuthProps) {
         });
         
         if (error) throw error;
-        
-        if (data.user) {
-          // Create entry in profiles table
-          // const { error: profileError } = await supabase
-          //   .from('profiles')
-          //   .insert({
-          //     id: data.user.id,
-          //     email: email,
-          //     full_name: '',
-          //     avatar_url: '',
-          //   });
-            
-          // if (profileError) console.error("Error creating profile:", profileError);
-            
-          // Create entry in event_registrations table
-          const { error: registrationError } = await supabase
-            .from('event_registrations')
-            .insert({
-              user_id: data.user.id,
-              email: email,
-              event_ids: [], // Empty array to start with
-              status: 'inactive', // No events registered yet
-              payment_status: 'unpaid',
-            });
-            
-          if (registrationError) console.error("Error creating registration entry:", registrationError);
-        }
+      
         
         setMessage('Check your email for the confirmation link');
       }

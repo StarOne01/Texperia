@@ -6,244 +6,8 @@ import Link from "next/link";
 import { supabase } from "../utils/supabaseClient";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-
-// Event data
-const events = [
-  {
-    id: 1,
-    title: "Paper Presentation",
-    description:
-      "Present your research papers and innovative ideas to experts in the field. Showcase your technical knowledge and research skills through well-structured presentations.",
-    color: "#4fd1c5",
-    date: "March 15, 2025",
-    time: "10:00 AM - 2:00 PM",
-    venue: "Main Auditorium",
-    prizes: "₹10,000",
-    teamSize: "1-2 members",
-    category: "technical",
-    rules: [
-      "Submit abstract before February 15, 2025",
-      "Presentation duration: 10 minutes",
-      "Q&A session: 5 minutes",
-      "Judgement based on innovation, clarity, and technical depth",
-    ],
-    coordinators: [
-      { name: "Mr. James", phone: "+917598813368" },
-      { name: "Ms. Keerthana", phone: "+916369306410" },
-    ],
-  },
-  {
-    id: 2,
-    title: "Technical Quiz",
-    description:
-      "Test your technical knowledge in this fast-paced, challenging quiz competition. Cover topics from electronics, programming, mathematics, and general engineering principles.",
-    icon: "/icons/quiz.svg",
-    color: "#38b2ac",
-    date: "March 15, 2025",
-    time: "3:00 PM - 5:00 PM",
-    venue: "Seminar Hall B",
-    prizes: "₹8,000",
-    teamSize: "2 members",
-    category: "technical",
-    rules: [
-      "Multiple rounds including rapid fire, buzzer, and visual rounds",
-      "Team elimination after each round",
-      "No electronic gadgets allowed during competition",
-      "Judge's decision is final",
-    ],
-    coordinators: [{ name: "Prof. Akash Verma", phone: "akash@texperia.org" }],
-  },
-  {
-    id: 3,
-    title: "Hackathon",
-    description:
-      "48 hours of coding, innovation, and problem-solving. Build solutions that matter in this intensive development marathon focused on real-world challenges.",
-    icon: "/icons/code.svg",
-    color: "#319795",
-    date: "March 15-16, 2025",
-    time: "Starts at 9:00 AM",
-    venue: "Innovation Hub",
-    prizes: "₹15,000",
-    teamSize: "3-4 members",
-    category: "flagship",
-    rules: [
-      "Teams must develop solutions aligned with provided themes",
-      "All code must be written during the event",
-      "Final presentations limited to 5 minutes",
-      "Solutions evaluated on innovation, technical complexity, and practicality",
-    ],
-    coordinators: [{ name: "Rahul Sharma", phone: "rahul@texperia.org" }],
-  },
-  {
-    id: 4,
-    title: "Project Presentation",
-    description:
-      "Showcase your engineering projects and get feedback from industry experts. Present working prototypes or detailed models of your innovative engineering solutions.",
-    icon: "/icons/project.svg",
-    color: "#2c7a7b",
-    date: "March 16, 2025",
-    time: "11:00 AM - 4:00 PM",
-    venue: "Exhibition Hall",
-    prizes: "₹12,000",
-    teamSize: "1-4 members",
-    category: "flagship",
-    rules: [
-      "Projects must be original work of the participants",
-      "Physical demonstration preferred but not mandatory",
-      "10 minutes for presentation followed by Q&A",
-      "Judging based on innovation, execution, and potential impact",
-    ],
-    coordinators: [{ name: "Sneha Patel", phone: "sneha@texperia.org" }],
-  },
-  {
-    id: 5,
-    title: "Rapid Prototype Challenge",
-    description:
-      "Design, build and demonstrate a working prototype within a limited timeframe. Test your quick thinking and hands-on skills in this exciting time-bound challenge.",
-    icon: "/public/prototype.svg",
-    color: "#285e61",
-    date: "March 15, 2025",
-    time: "10:00 AM - 4:00 PM",
-    venue: "Workshop Area",
-    prizes: "₹10,000",
-    teamSize: "2-3 members",
-    category: "technical",
-    rules: [
-      "Materials will be provided at the venue",
-      "6 hours to complete the prototype",
-      "Design should solve the specified problem statement",
-      "Judging based on functionality, design, and innovation",
-    ],
-    coordinators: [{ name: "Arjun Mehta", phone: "arjun@texperia.org" }],
-  },
-  {
-    id: 6,
-    title: "Poster Presentation",
-    description:
-      "Visualize your ideas through creative posters and win exciting prizes. Present complex technical concepts through effective visual communication.",
-    icon: "/icons/poster.svg",
-    color: "#234e52",
-    date: "March 16, 2025",
-    time: "9:00 AM - 1:00 PM",
-    venue: "Gallery Hall",
-    prizes: "₹5,000",
-    teamSize: "1-2 members",
-    category: "non-technical",
-    rules: [
-      "Poster size: A1 (594 x 841 mm)",
-      "Content must be original and technically accurate",
-      "Brief 3-minute explanation to judges",
-      "Judging based on content clarity, visual appeal, and technical depth",
-    ],
-    coordinators: [{ name: "Meera Kapoor", phone: "meera@texperia.org" }],
-  },
-  {
-    id: 7,
-    title: "Circuit Debugging",
-    description:
-      "Find and fix errors in complex electrical circuits against the clock. Test your troubleshooting skills and theoretical knowledge in this practical challenge.",
-    icon: "/icons/circuit.svg",
-    color: "#805ad5",
-    date: "March 15, 2025",
-    time: "2:00 PM - 5:00 PM",
-    venue: "Electronics Lab",
-    prizes: "₹7,000",
-    teamSize: "2 members",
-    category: "technical",
-    rules: [
-      "Teams will receive faulty circuits to debug",
-      "Limited time per circuit (30 minutes)",
-      "Only provided tools can be used",
-      "Judging based on accuracy and time taken",
-    ],
-    coordinators: [{ name: "Dr. Vijay Kumar", phone: "vijay@texperia.org" }],
-  },
-  {
-    id: 8,
-    title: "Sketch Your Creativity",
-    description:
-      "Express your technical concepts through artistic sketches and diagrams. Blend art with engineering in this unique competition focusing on technical illustration.",
-    icon: "/icons/sketch.svg",
-    color: "#6b46c1",
-    date: "March 16, 2025",
-    time: "10:00 AM - 1:00 PM",
-    venue: "Design Studio",
-    prizes: "₹5,000",
-    teamSize: "1 member",
-    category: "non-technical",
-    rules: [
-      "Topic will be provided on the spot",
-      "3 hours to complete the sketch",
-      "All materials must be brought by participants",
-      "Judging based on creativity, technical accuracy, and execution",
-    ],
-    coordinators: [{ name: "Neha Sharma", phone: "neha@texperia.org" }],
-  },
-  {
-    id: 9,
-    title: "CEO Talk",
-    description:
-      "Hear industry leaders share insights on technology trends and career paths. Engage with top executives and gain valuable perspective on the future of engineering and technology.",
-    icon: "/icons/talk.svg",
-    color: "#553c9a",
-    date: "March 16, 2025",
-    time: "2:00 PM - 4:00 PM",
-    venue: "Conference Hall",
-    prizes: "Certificate of Participation",
-    teamSize: "Individual Registration",
-    category: "non-technical",
-    rules: [
-      "Pre-registration required due to limited seating",
-      "Questions must be submitted in advance",
-      "Professional etiquette expected",
-      "Recording permitted only with prior permission",
-    ],
-    coordinators: [{ name: "Amit Singh", phone: "amit@texperia.org" }],
-  },
-  {
-    id: 10,
-    title: "Workshop",
-    description:
-      "Hands-on sessions on cutting-edge technologies and engineering practices. Learn practical skills from industry experts in specialized areas of technology.",
-    icon: "/icons/workshop.svg",
-    color: "#44337a",
-    date: "Both Days",
-    time: "Various Timings",
-    venue: "Multiple Locations",
-    prizes: "Certificate of Completion",
-    teamSize: "Individual Registration",
-    category: "non-technical",
-    rules: [
-      "Separate registration required for each workshop",
-      "Materials will be provided",
-      "Limited seats available",
-      "Prior knowledge requirements vary by workshop",
-    ],
-    coordinators: [{ name: "Divya Reddy", phone: "divya@texperia.org" }],
-  },
-  {
-    id: 11,
-    title: "Electrical Safety Mime",
-    description:
-      "Creative performances highlighting the importance of electrical safety. Communicate important safety concepts through the art of mime and non-verbal expression.",
-    icon: "/icons/safety.svg",
-    color: "#3c366b",
-    date: "March 15, 2025",
-    time: "5:00 PM - 7:00 PM",
-    venue: "Open Air Theater",
-    prizes: "₹6,000",
-    teamSize: "3-5 members",
-    category: "non-technical",
-    rules: [
-      "Performance duration: 5-7 minutes",
-      "No dialogues allowed",
-      "Background music permitted",
-      "Props should be minimal and relevant",
-      "Judging based on clarity of message, creativity, and execution",
-    ],
-    coordinators: [{ name: "Pradeep Nair", phone: "pradeep@texperia.org" }],
-  },
-];
+import events from "../data/events";
+import toast, { Toaster } from "react-hot-toast"; // Add this import
 
 const anta = Anta({
   weight: "400",
@@ -253,21 +17,73 @@ const anta = Anta({
 export default function Dashboard() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [profile, setProfile] = useState<any>(null);
   const [registeredEvents, setRegisteredEvents] = useState<any[]>([]);
   const [paymentStatus, setPaymentStatus] = useState<string>("");
   const [activeTab, setActiveTab] = useState("events");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const router = useRouter();
 
-  // Generate fixed random positions for circuit nodes (solves hydration error)
+  // Replace the random circuit nodes with deterministic values
   const circuitNodes = useMemo(() => {
-    return Array.from({ length: 12 }, () => ({
-      top: 15 + Math.random() * 70,
-      left: 15 + Math.random() * 70,
-      animationDelay: Math.random() * 2,
-      animationDuration: 3 + Math.random() * 2,
-    }));
+    return [
+      { top: 73.34, left: 46.93, animationDelay: 0.2, animationDuration: 3.92 },
+      {
+        top: 17.52,
+        left: 42.49,
+        animationDelay: 1.57,
+        animationDuration: 3.81,
+      },
+      {
+        top: 57.25,
+        left: 28.34,
+        animationDelay: 0.97,
+        animationDuration: 4.46,
+      },
+      { top: 31.7, left: 18.09, animationDelay: 0.04, animationDuration: 3.75 },
+      { top: 72.29, left: 40.78, animationDelay: 1.0, animationDuration: 3.73 },
+      {
+        top: 42.62,
+        left: 32.98,
+        animationDelay: 0.57,
+        animationDuration: 3.53,
+      },
+      {
+        top: 56.41,
+        left: 49.69,
+        animationDelay: 0.47,
+        animationDuration: 4.56,
+      },
+      {
+        top: 60.31,
+        left: 22.91,
+        animationDelay: 1.46,
+        animationDuration: 4.93,
+      },
+      {
+        top: 74.08,
+        left: 61.88,
+        animationDelay: 0.88,
+        animationDuration: 4.08,
+      },
+      {
+        top: 25.29,
+        left: 15.74,
+        animationDelay: 0.29,
+        animationDuration: 3.91,
+      },
+      {
+        top: 82.11,
+        left: 84.44,
+        animationDelay: 1.87,
+        animationDuration: 4.05,
+      },
+      {
+        top: 75.61,
+        left: 46.38,
+        animationDelay: 0.37,
+        animationDuration: 4.24,
+      },
+    ];
   }, []);
 
   useEffect(() => {
@@ -275,108 +91,167 @@ export default function Dashboard() {
       const { data, error } = await supabase.auth.getSession();
 
       if (error || !data.session) {
+        toast.error("Session expired. Please log in again.");
         router.push("/login");
         return;
       }
 
       setUser(data.session.user);
-      await fetchUserProfile(data.session.user.id);
-      await fetchRegisteredEvents(data.session.user.id);
+
+      // Pass both the ID and the email to fetchRegisteredEvents
+      await fetchRegisteredEvents(
+        data.session.user.id,
+        data.session.user.email
+      );
       setLoading(false);
     };
 
     checkSession();
   }, [router]);
 
-  const fetchUserProfile = async (userId: string) => {
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", userId)
-      .single();
-
-    if (data) setProfile(data);
-  };
-
-  const fetchRegisteredEvents = async (userId: string) => {
+  const fetchRegisteredEvents = async (userId: string, userEmail?: string) => {
+    // Use the email parameter instead of user.email
     const { data, error } = await supabase
       .from("event_registrations")
       .select("event_ids, payment_status")
       .eq("user_id", userId);
 
-    if (data) {
-      setRegisteredEvents(data[0].event_ids || []);
-      setPaymentStatus(data[0].payment_status || []);
+    if (error) {
+      toast.error("Failed to load your data, please check your network");
+      return;
     }
 
-    console.log(data);
+    if (data && data.length > 0) {
+      console.log(data);
+      setRegisteredEvents(data[0].event_ids || []);
+      setPaymentStatus(data[0].payment_status || []);
+      
+      // Show appropriate toast based on payment status
+      if (data[0].payment_status === "verified") {
+        toast.success("Your payment has been verified!", { duration: 4000 });
+      } else if (data[0].payment_status === "paid") {
+        toast("Payment verification in progress", { 
+          icon: "⏳",
+          duration: 4000
+        });
+      } else if (data[0].payment_status === "failed") {
+        toast.error("Payment verification failed. Please try again.", { duration: 4000 });
+      }
+    } else {
+      // Create new entry if none exists
+      const { data: newEntry, error: createError } = await supabase
+        .from("event_registrations")
+        .insert({
+          user_id: userId,
+          email: userEmail, // Use the passed email instead of user.email
+          event_ids: [],
+          status: "inactive",
+          payment_status: "unpaid",
+          created_at: new Date().toISOString(),
+        })
+        .select();
+
+      if (createError) {
+        toast.error("Failed to initialize your profile");
+        return;
+      }
+
+      if (!createError) {
+        setRegisteredEvents([]);
+        setPaymentStatus("unpaid");
+      }
+    }
   };
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast.error("Failed to log out");
+      return;
+    }
+    toast.success("Successfully logged out");
     router.push("/");
+  };
+
+  // Add profile update handler
+  const handleProfileUpdate = async () => {
+    // Code to update profile in Supabase
+    
+    // Show loading toast during API call
+    const toastId = toast.loading("Updating your profile...");
+    
+    // Simulate API delay (replace with real update code)
+    setTimeout(() => {
+      toast.success("Profile updated successfully!", {
+        id: toastId,
+      });
+    }, 1000);
+  };
+
+  // Team management handlers
+  const handleRemoveTeamMember = (memberName: string) => {
+    toast((t) => (
+      <div className="flex items-center gap-3">
+        <span>Remove {memberName} from team?</span>
+        <button 
+          className="bg-red-500 text-white px-2 py-1 rounded text-xs"
+          onClick={() => {
+            toast.dismiss(t.id);
+            toast.success(`${memberName} removed from team`);
+          }}
+        >
+          Confirm
+        </button>
+        <button 
+          className="bg-gray-500 text-white px-2 py-1 rounded text-xs"
+          onClick={() => toast.dismiss(t.id)}
+        >
+          Cancel
+        </button>
+      </div>
+    ), { duration: 5000 });
+  };
+
+  const handleDeleteTeam = () => {
+    toast((t) => (
+      <div className="flex items-center gap-3">
+        <span>Delete Team Quantum? This cannot be undone.</span>
+        <button 
+          className="bg-red-500 text-white px-2 py-1 rounded text-xs"
+          onClick={() => {
+            toast.dismiss(t.id);
+            toast.success("Team deleted successfully");
+          }}
+        >
+          Delete
+        </button>
+        <button 
+          className="bg-gray-500 text-white px-2 py-1 rounded text-xs"
+          onClick={() => toast.dismiss(t.id)}
+        >
+          Cancel
+        </button>
+      </div>
+    ), { duration: 5000 });
+  };
+
+  const handleCreateTeam = () => {
+    toast.success("New team created successfully!");
   };
 
   if (loading) {
     return (
-      <div className="fixed inset-0 bg-black z-50 flex items-center justify-center">
-        {/* Tech circuit background */}
-        <div className="absolute inset-0 overflow-hidden opacity-20">
-          <div className="absolute h-[200%] w-px bg-blue-500/50 left-1/4 animate-tech-line-1"></div>
-          <div className="absolute h-[200%] w-px bg-purple-500/50 left-1/3 animate-tech-line-2"></div>
-          <div className="absolute h-[200%] w-px bg-blue-500/50 left-2/3 animate-tech-line-3"></div>
-          <div className="absolute w-[200%] h-px bg-blue-500/50 top-1/4 animate-tech-line-4"></div>
-          <div className="absolute w-[200%] h-px bg-purple-500/50 top-2/3 animate-tech-line-5"></div>
-
-          {/* Circuit nodes with pre-generated random values */}
-          {circuitNodes.map((node, i) => (
-            <div
-              key={i}
-              className="absolute w-2 h-2 rounded-full bg-blue-400/80 animate-pulse-random"
-              style={{
-                top: `${node.top}%`,
-                left: `${node.left}%`,
-                animationDelay: `${node.animationDelay}s`,
-                animationDuration: `${node.animationDuration}s`,
-              }}
-            ></div>
-          ))}
-        </div>
-
-        {/* Center glowing element */}
-        <div className="relative flex flex-col items-center">
-          {/* Outer rings */}
-          <div className="absolute w-40 h-40 rounded-full border border-blue-500/30 animate-spin-slow"></div>
-          <div className="absolute w-48 h-48 rounded-full border border-purple-500/20 animate-reverse-spin"></div>
-          <div className="absolute w-56 h-56 rounded-full border border-blue-500/10 animate-spin-slower"></div>
-
-          {/* Glowing core */}
-          <div className="relative flex items-center justify-center w-32 h-32">
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-purple-600/20 rounded-full blur-md"></div>
-            <div className="absolute inset-2 bg-gradient-to-br from-blue-500/30 to-purple-500/30 rounded-full animate-pulse"></div>
-            <div className="absolute inset-4 bg-gradient-to-br from-blue-400/40 to-purple-400/40 rounded-full blur-sm"></div>
-
-            {/* Logo */}
-            <h1
-              className={`relative text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-purple-300 ${anta.className}`}
-            >
-              TEX
-            </h1>
-          </div>
-
-          {/* Text */}
-          <div className="mt-16 text-center">
-            <div
-              className={`text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 ${anta.className} tracking-wider`}
-            >
-              TEXPERIA
-            </div>
-            <div className="mt-3 text-blue-300 flex items-center gap-2">
-              <span>Loading</span>
-              <span className="inline-block w-1 h-1 bg-blue-300 rounded-full animate-pulse"></span>
-              <span className="inline-block w-1 h-1 bg-blue-300 rounded-full animate-pulse delay-100"></span>
-              <span className="inline-block w-1 h-1 bg-blue-300 rounded-full animate-pulse delay-200"></span>
-            </div>
+      <div className="min-h-screen bg-black text-white p-8">
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            className: "backdrop-blur-md bg-blue-900/50 text-blue-200 border border-blue-500/30",
+            duration: 3000,
+          }}
+        />
+        <div className="max-w-4xl mx-auto">
+          <div className="flex items-center justify-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
           </div>
         </div>
       </div>
@@ -385,6 +260,33 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-black text-white">
+      {/* Toast Component */}
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          className: "backdrop-blur-md bg-blue-900/50 text-blue-200 border border-blue-500/30",
+          duration: 3000,
+          style: {
+            background: "rgba(26, 32, 44, 0.8)",
+            color: "#90cdf4",
+            backdropFilter: "blur(8px)",
+            border: "1px solid rgba(66, 153, 225, 0.3)",
+          },
+          success: {
+            iconTheme: {
+              primary: "#4fd1c5",
+              secondary: "#1a202c",
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: "#fc8181",
+              secondary: "#1a202c",
+            },
+          },
+        }}
+      />
+
       {/* Animated Background Elements */}
       <div className="fixed inset-0 overflow-hidden -z-10">
         <div className="absolute top-[10%] left-[20%] w-96 h-96 bg-blue-700 rounded-full filter blur-3xl opacity-10 animate-pulse-slower"></div>
@@ -395,7 +297,7 @@ export default function Dashboard() {
       {/* Navigation */}
       <nav className="sticky top-0 z-50 px-6 py-4 backdrop-blur-md bg-black/70 border-b border-blue-500/20">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <Link href="/" className="flex items-center">
+          <Link href="/#events" className="flex items-center">
             <h1 className={`text-xl font-bold text-blue-300 ${anta.className}`}>
               TEXPERIA
             </h1>
@@ -404,7 +306,7 @@ export default function Dashboard() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-6">
             <div className="text-blue-300">
-              Welcome, {profile?.name || user?.email}
+              Welcome, {user.user_metadata.name || user?.email}
             </div>
             <button
               onClick={handleLogout}
@@ -461,10 +363,13 @@ export default function Dashboard() {
         >
           <div className="px-6 py-4 flex flex-col gap-4">
             <div className="text-blue-300 border-b border-blue-500/20 pb-2">
-              Welcome, {profile?.name || user?.email}
+              Welcome, {user.user_metadata?.name || user.email}
             </div>
             <div className="flex flex-col gap-3 mb-2">
-              <Link href="/" className="text-blue-300 hover:text-blue-200 py-2">
+              <Link
+                href="/#events"
+                className="text-blue-300 hover:text-blue-200 py-2"
+              >
                 Home
               </Link>
               <Link
@@ -532,28 +437,45 @@ export default function Dashboard() {
               <h2 className="text-2xl font-semibold text-blue-300">
                 Registered Events
               </h2>
-              <Link
-                href="/events"
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 px-4 py-2 rounded-lg text-white font-medium"
-              >
-                Browse More Events
-              </Link>
-              {paymentStatus === "complete" ? (
+
+              {paymentStatus === "verified" ? (
                 <button
                   className="bg-green-500/20 text-green-300 px-4 py-2 rounded-lg font-medium"
                   disabled
                 >
-                  Payment Complete
+                  Payment Verified
+                </button>
+              ) : paymentStatus === "paid" ? (
+                <button 
+                  onClick={() => {
+                    router.push("/payment");
+                    toast("Checking payment status...", { icon: "⏳" });
+                  }}
+                  className="bg-yellow-500/20 text-blue-300 px-4 py-2 rounded-lg font-medium"
+                >
+                  Verifying Payment
+                </button>
+              ) : paymentStatus === "failed" ? (
+                <button 
+                  onClick={() => {
+                    router.push("/payment");
+                    toast.error("Sorry, we couldn't verify your payment. Please contact our co-ordinators.");
+                  }}
+                  className="bg-red-500 text-white px-4 py-2 rounded-lg font-medium"
+                >
+                  Payment Verification Failed
                 </button>
               ) : (
                 <button
-                  className="bg-blue-500/20 text-blue-300 px-4 py-2 rounded-lg font-medium"
-                  disabled
+                  onClick={() => {
+                    router.push("/payment");
+                    toast("Redirecting to payment page...");
+                  }}
+                  className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white font-medium"
                 >
-                  Payment Pending
+                  Pay Now
                 </button>
-              )
-              }
+              )}
             </div>
 
             {registeredEvents.length === 0 ? (
@@ -576,7 +498,7 @@ export default function Dashboard() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {registeredEvents.map((registration) => (
                   <div
-                    key={registration.event_id}
+                    key={registration}
                     className="group bg-gradient-to-br from-blue-900/30 to-purple-900/30 rounded-xl p-6 border border-blue-500/30 backdrop-blur-sm hover:border-blue-500/50 transition-all relative overflow-hidden"
                   >
                     <div className="absolute top-0 right-0 bg-green-500/20 text-green-300 px-3 py-1 text-xs font-medium rounded-bl-lg">
@@ -616,6 +538,12 @@ export default function Dashboard() {
                 ))}
               </div>
             )}
+            <Link
+              href="/events"
+              className="bg-gradient-to-r mt-120 from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 px-4 py-2 rounded-lg text-white font-medium"
+            >
+              Browse More Events
+            </Link>
 
             <div className="mt-12">
               <h2 className="text-2xl font-semibold text-blue-300 mb-6">
@@ -658,112 +586,6 @@ export default function Dashboard() {
           </>
         )}
 
-        {/* Profile Tab Content */}
-        {activeTab === "profile" && (
-          <div className="bg-gradient-to-br from-blue-900/30 to-purple-900/30 rounded-xl p-8 border border-blue-500/30 backdrop-blur-sm">
-            <h2 className="text-2xl font-semibold text-blue-300 mb-6">
-              Your Profile
-            </h2>
-
-            <div className="grid md:grid-cols-2 gap-8">
-              <div>
-                <div className="mb-6">
-                  <label className="block text-blue-400 mb-2 text-sm">
-                    Email Address
-                  </label>
-                  <div className="bg-blue-900/30 border border-blue-500/30 rounded p-3 text-blue-200">
-                    {user?.email}
-                  </div>
-                </div>
-
-                <div className="mb-6">
-                  <label className="block text-blue-400 mb-2 text-sm">
-                    Full Name
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full bg-blue-900/30 border border-blue-500/30 rounded p-3 text-white"
-                    defaultValue={profile?.name || ""}
-                    placeholder="Enter your full name"
-                  />
-                </div>
-
-                <div className="mb-6">
-                  <label className="block text-blue-400 mb-2 text-sm">
-                    College/Institution
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full bg-blue-900/30 border border-blue-500/30 rounded p-3 text-white"
-                    defaultValue={profile?.college || ""}
-                    placeholder="Enter your college name"
-                  />
-                </div>
-
-                <div className="mb-6">
-                  <label className="block text-blue-400 mb-2 text-sm">
-                    Phone Number
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full bg-blue-900/30 border border-blue-500/30 rounded p-3 text-white"
-                    defaultValue={profile?.phone || ""}
-                    placeholder="Enter your phone number"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <div className="mb-6">
-                  <label className="block text-blue-400 mb-2 text-sm">
-                    Department/Major
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full bg-blue-900/30 border border-blue-500/30 rounded p-3 text-white"
-                    defaultValue={profile?.department || ""}
-                    placeholder="Enter your department or major"
-                  />
-                </div>
-
-                <div className="mb-6">
-                  <label className="block text-blue-400 mb-2 text-sm">
-                    Year of Study
-                  </label>
-                  <select
-                    className="w-full bg-blue-900/30 border border-blue-500/30 rounded p-3 text-white"
-                    defaultValue={profile?.year || ""}
-                  >
-                    <option value="">Select year</option>
-                    <option value="1">1st Year</option>
-                    <option value="2">2nd Year</option>
-                    <option value="3">3rd Year</option>
-                    <option value="4">4th Year</option>
-                    <option value="5">5th Year</option>
-                    <option value="other">Other</option>
-                  </select>
-                </div>
-
-                <div className="mb-6">
-                  <label className="block text-blue-400 mb-2 text-sm">
-                    Bio
-                  </label>
-                  <textarea
-                    className="w-full bg-blue-900/30 border border-blue-500/30 rounded p-3 text-white h-32"
-                    defaultValue={profile?.bio || ""}
-                    placeholder="Tell us about yourself"
-                  ></textarea>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-4 flex justify-end">
-              <button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 px-6 py-3 rounded-lg text-white font-medium">
-                Save Changes
-              </button>
-            </div>
-          </div>
-        )}
 
         {/* Teams Tab Content */}
         {activeTab === "teams" && (
@@ -812,7 +634,10 @@ export default function Dashboard() {
                         <div className="text-blue-400 text-xs">Member</div>
                       </div>
                     </div>
-                    <button className="text-red-400 hover:text-red-300 text-sm">
+                    <button 
+                      onClick={() => handleRemoveTeamMember("Alice Smith")} 
+                      className="text-red-400 hover:text-red-300 text-sm"
+                    >
                       Remove
                     </button>
                   </div>
@@ -827,23 +652,35 @@ export default function Dashboard() {
                         <div className="text-blue-400 text-xs">Member</div>
                       </div>
                     </div>
-                    <button className="text-red-400 hover:text-red-300 text-sm">
+                    <button 
+                      onClick={() => handleRemoveTeamMember("Robert Johnson")} 
+                      className="text-red-400 hover:text-red-300 text-sm"
+                    >
                       Remove
                     </button>
                   </div>
                 </div>
 
                 <div className="flex justify-end gap-4 mt-6">
-                  <button className="border border-red-500/30 text-red-400 hover:bg-red-900/20 px-4 py-2 rounded-lg text-sm">
+                  <button 
+                    onClick={handleDeleteTeam}
+                    className="border border-red-500/30 text-red-400 hover:bg-red-900/20 px-4 py-2 rounded-lg text-sm"
+                  >
                     Delete Team
                   </button>
-                  <button className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white text-sm">
+                  <button 
+                    onClick={() => toast.success("Invitation sent!")}
+                    className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white text-sm"
+                  >
                     Invite Member
                   </button>
                 </div>
               </div>
 
-              <button className="w-full border border-dashed border-blue-500/30 text-blue-400 hover:text-blue-300 hover:border-blue-500/50 p-4 rounded-xl">
+              <button 
+                onClick={handleCreateTeam}
+                className="w-full border border-dashed border-blue-500/30 text-blue-400 hover:text-blue-300 hover:border-blue-500/50 p-4 rounded-xl"
+              >
                 + Create New Team
               </button>
             </div>

@@ -12,7 +12,7 @@ export default function Register() {
   return (
     <div className="min-h-screen bg-black text-white py-20 px-4">
       <div className="max-w-6xl mx-auto">
-        <Link href="/" className="inline-block mb-10 text-blue-300 hover:text-blue-200">
+        <Link href="/#events" className="inline-block mb-10 text-blue-300 hover:text-blue-200">
           ← Back to home
         </Link>
         
