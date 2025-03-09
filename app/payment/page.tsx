@@ -452,7 +452,7 @@ export default function PaymentPage() {
       {/* Footer */}
       <footer className="px-6 py-10 mt-16 border-t border-blue-500/20">
         <div className="max-w-6xl mx-auto text-center text-blue-400/70 text-sm">
-          <p>© {new Date().getFullYear()} Texperia. All rights reserved. For inquiries, contact <a href="mailto:info@texperia.org" className="text-blue-400">info@texperia.org</a></p>
+          <p>© {new Date().getFullYear()} Texperia. All rights reserved. For inquiries, contact <Link href="mailto:info@texperia.org" className="text-blue-400">info@texperia.org</Link></p>
         </div>
       </footer>
     </div>

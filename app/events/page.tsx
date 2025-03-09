@@ -745,7 +745,7 @@ export default function Events() {
       {/* Footer */}
       <footer className="px-6 py-10 border-t border-blue-500/20">
         <div className="max-w-6xl mx-auto text-center text-blue-400/70 text-sm">
-          <p>© 2025 Texperia. All rights reserved. For inquiries, <a href="/#footer" className="text-blue-400">Contact Coordinators</a></p>
+          <p>© 2025 Texperia. All rights reserved. For inquiries, <Link href="/#footer" className="text-blue-400">Contact Coordinators</Link></p>
         </div>
       </footer>
     </div>

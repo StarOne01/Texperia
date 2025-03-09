@@ -357,53 +357,53 @@ export default function Home() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <a
+            <Link
               href="#"
               className="text-blue-200 hover:text-blue-300 transition-colors"
             >
               Home
-            </a>
-            <a
+            </ Link>
+            <Link
               href="#events"
               className="text-blue-200 hover:text-blue-300 transition-colors"
             >
               Events
-            </a>
-            <a
+            </Link>
+            <Link
               href="#about"
               className="text-blue-200 hover:text-blue-300 transition-colors"
             >
               About
-            </a>
-            <a
+            </Link>
+            <Link
               href="#faq"
               className="text-blue-200 hover:text-blue-300 transition-colors"
             >
               FAQ
-            </a>
+            </Link>
 
             {/* Auth Button */}
             {user ? (
-              <a
+              <Link
                 href="/dashboard"
                 className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 px-4 py-2 rounded-lg text-white"
               >
                 Dashboard
-              </a>
+              </Link>
             ) : (
               <>
-                <a
+                <Link
                   href="/login"
                   className="px-4 py-2 text-blue-200 hover:text-blue-100 transition-colors"
                 >
                   Login
-                </a>
-                <a
+                </Link>
+                <Link
                   href="/register"
                   className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 px-4 py-2 rounded-lg text-white"
                 >
                   Register
-                </a>
+                </Link>
               </>
             )}
           </div>
@@ -451,14 +451,14 @@ export default function Home() {
             >
               <div className="flex flex-col space-y-3 px-6">
                 {["Home", "Events", "About", "Timeline", "FAQ"].map((item) => (
-                  <a
+                  <Link
                     key={item}
                     href={`#${item.toLowerCase()}`}
                     className="text-blue-200 hover:text-blue-300 transition-colors py-2"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {item}
-                  </a>
+                  </Link>
                 ))}
                 
                 <div className="pt-2 border-t border-blue-500/20 mt-2">
@@ -636,7 +636,7 @@ export default function Home() {
           {/* Replace your existing buttons with these */}
           <div className="md:mt-6 flex gap-4">
             {user ? (
-              <a
+              <Link
                 href="/dashboard"
                 className="md:px-8 px-6 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 rounded-full text-white font-bold transition-all shadow-lg shadow-blue-500/20 hover:shadow-purple-500/40 transform hover:scale-105"
               >
@@ -656,9 +656,9 @@ export default function Home() {
                     />
                   </svg>
                 </span>
-              </a>
+              </Link>
             ) : (
-              <a
+              <Link
                 href="/register"
                 className="md:px-8 px-6 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 rounded-full text-white font-bold transition-all shadow-lg shadow-blue-500/20 hover:shadow-purple-500/40 transform hover:scale-105"
               >
@@ -678,7 +678,7 @@ export default function Home() {
                     />
                   </svg>
                 </span>
-              </a>
+              </Link>
             )}
 
             <button onClick={()=> window.location.href='#events'} className="px-8 py-4 bg-transparent border-2 border-blue-500/30 hover:border-purple-500/50 rounded-full text-blue-300 hover:text-purple-300 font-bold transition-all transform hover:scale-105 backdrop-blur-sm">
@@ -1057,30 +1057,30 @@ export default function Home() {
                 celebration of innovation and engineering excellence.
               </p>
               <div className="flex gap-4">
-                <a
+                <Link
                   href="#"
                   className="w-8 h-8 rounded-full bg-blue-900/50 flex items-center justify-center hover:bg-blue-800/70 transition-colors"
                 >
                   <span>📘</span>
-                </a>
-                <a
+                </Link>
+                <Link
                   href="#"
                   className="w-8 h-8 rounded-full bg-blue-900/50 flex items-center justify-center hover:bg-blue-800/70 transition-colors"
                 >
                   <span>📸</span>
-                </a>
-                <a
+                </Link>
+                <Link
                   href="#"
                   className="w-8 h-8 rounded-full bg-blue-900/50 flex items-center justify-center hover:bg-blue-800/70 transition-colors"
                 >
                   <span>📺</span>
-                </a>
-                <a
+                </Link>
+                <Link
                   href="#"
                   className="w-8 h-8 rounded-full bg-blue-900/50 flex items-center justify-center hover:bg-blue-800/70 transition-colors"
                 >
                   <span>🐦</span>
-                </a>
+                </Link>
               </div>
             </div>
 
