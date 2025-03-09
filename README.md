@@ -1,36 +1,121 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TEXPERIA - Technical Symposium Event Platform
+
+
+## Overview
+
+Texperia is a modern web application for a national-level technical symposium that brings together brilliant minds to showcase innovation, technical prowess, and creative solutions to real-world problems. The platform allows students from educational institutions to explore events, register, and participate in various technical competitions.
+
+## Features
+
+- ✨ Dynamic and interactive UI with animations powered by Framer Motion and GSAP
+- 🚀 Event exploration and detailed information for various technical competitions
+- 🔐 User authentication and registration system using Supabase
+- 📱 Responsive design that works seamlessly on desktop and mobile devices
+- ⏱️ Countdown timer to the symposium date
+- 🎯 Interactive event cards with hover effects
+- 📝 FAQ section with expandable questions and answers
+- 👥 User dashboard for registered participants
+
+## Tech Stack
+
+- **Framework**: Next.js (App Router)
+- **UI/Styling**: Tailwind CSS
+- **Animations**: 
+  - GSAP (GreenSock Animation Platform)
+  - Framer Motion
+- **Authentication**: Supabase Auth
+- **Database**: Supabase (PostgreSQL)
+- **Fonts**: Next/font with Google Fonts (Anta)
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Node.js 18.x or higher
+- npm or yarn package manager
+- Supabase account (for authentication and database)
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/texperia.git
+   cd texperia
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
+
+3. Create a `.env.local` file in the root directory with your Supabase credentials:
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+   ```
+
+4. Run the development server:
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
+
+5. Open [http://localhost:3000](http://localhost:3000) with your browser to see the application.
+
+## Project Structure
+
+```
+texperia/
+├── app/
+│   ├── components/
+│   │   ├── Auth.tsx
+│   │   └── Dashboard.tsx
+│   ├── utils/
+│   │   └── supabaseClient.ts
+│   └── page.tsx
+├── public/
+│   ├── bg.mp4
+│   └── icons/
+└── ...configuration files
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Deployment
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Deploy on Vercel
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The easiest way to deploy your Next.js app is to use the Vercel platform.
 
-## Learn More
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/yourusername/texperia)
 
-To learn more about Next.js, take a look at the following resources:
+### Alternative Deployment Options
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+For other deployment options, follow the [Next.js deployment documentation](https://nextjs.org/docs/deployment).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Contributing
 
-## Deploy on Vercel
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Acknowledgements
+
+- [Next.js](https://nextjs.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [GSAP](https://greensock.com/gsap/)
+- [Framer Motion](https://www.framer.com/motion/)
+- [Supabase](https://supabase.io/)
+
+---
+
+Built with ❤️ for the future tech enthusiasts
