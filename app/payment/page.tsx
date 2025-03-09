@@ -7,6 +7,7 @@ import events from '../data/events';
 import Link from 'next/link';
 import { Anta } from 'next/font/google';
 import toast, { Toaster } from "react-hot-toast";
+import { User } from '@supabase/supabase-js';
 
 const anta = Anta({
   weight: '400',
@@ -15,7 +16,7 @@ const anta = Anta({
 
 export default function PaymentPage() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [registeredEvents, setRegisteredEvents] = useState<number[]>([]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -26,8 +27,6 @@ export default function PaymentPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
 
-  // Registration fee per event
-  const EVENT_FEE = 150;
 
   useEffect(() => {
     const checkUser = async () => {
@@ -122,7 +121,7 @@ export default function PaymentPage() {
       if (file) {
         const fileExt = file.name.split('.').pop();
         const fileName = `${Date.now()}.${fileExt}`;
-        const userFolder = `${user.id}`;
+        const userFolder = `${user?.id}`;
         const filePath = `${userFolder}/${fileName}`;
         
         // Check for existing files in user folder
@@ -144,7 +143,7 @@ export default function PaymentPage() {
         }
         
         // Upload new file
-        const { data: uploadData, error: uploadError } = await supabase.storage
+        const { data: _, error: uploadError } = await supabase.storage
           .from('payment-proofs')
           .upload(filePath, file);
         
@@ -168,7 +167,7 @@ export default function PaymentPage() {
           payment_status: 'paid',
           payment_date: new Date().toISOString()
         })
-        .eq('user_id', user.id);
+        .eq('user_id', user?.id);
         
       if (updateError) throw updateError;
       
@@ -249,7 +248,7 @@ export default function PaymentPage() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-6">
             <div className="text-blue-300">
-              Welcome, {user.user_metadata.name || user?.email}
+              Welcome, {user?.user_metadata.name || user?.email || 'User'}
             </div>
             <button
               onClick={handleLogout}
@@ -306,7 +305,7 @@ export default function PaymentPage() {
         >
           <div className="px-6 py-4 flex flex-col gap-4">
             <div className="text-blue-300 border-b border-blue-500/20 pb-2">
-              Welcome, {user.user_metadata?.name || user.email}
+              Welcome, {user?.user_metadata?.name || user?.email || 'User'}
             </div>
             <div className="flex flex-col gap-3 mb-2">
               <Link
@@ -339,7 +338,7 @@ export default function PaymentPage() {
         <div className="mb-8">
           {!(registeredEventDetails.length > 0 )&& (
             <div className="bg-gradient-to-br from-blue-900/30 to-purple-900/30 rounded-xl p-6 text-center border border-blue-500/30">
-              <div className="text-blue-400">You haven't registered for any events yet.</div>
+              <div className="text-blue-400">You haven&apos;t registered for any events yet.</div>
               <Link 
                 href="/events" 
                 className="mt-4 inline-block bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 px-6 py-3 rounded-lg text-white font-medium"

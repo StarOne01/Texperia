@@ -8,6 +8,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import events from "../data/events";
 import toast, { Toaster } from "react-hot-toast"; // Add this import
+import { User } from "@supabase/supabase-js";
 
 const anta = Anta({
   weight: "400",
@@ -15,9 +16,9 @@ const anta = Anta({
 });
 
 export default function Dashboard() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [registeredEvents, setRegisteredEvents] = useState<any[]>([]);
+  const [registeredEvents, setRegisteredEvents] = useState<number[]>([]);
   const [paymentStatus, setPaymentStatus] = useState<string>("");
   const [activeTab, setActiveTab] = useState("events");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -306,7 +307,7 @@ export default function Dashboard() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-6">
             <div className="text-blue-300">
-              Welcome, {user.user_metadata.name || user?.email}
+              Welcome, {user?.user_metadata.name || user?.email || "User"}
             </div>
             <button
               onClick={handleLogout}
@@ -363,7 +364,7 @@ export default function Dashboard() {
         >
           <div className="px-6 py-4 flex flex-col gap-4">
             <div className="text-blue-300 border-b border-blue-500/20 pb-2">
-              Welcome, {user.user_metadata?.name || user.email}
+              Welcome, {user?.user_metadata?.name || user?.email || "User"}
             </div>
             <div className="flex flex-col gap-3 mb-2">
               <Link
@@ -524,10 +525,10 @@ export default function Dashboard() {
                       <div className="flex items-center justify-between">
                         <div className="text-sm text-blue-300">
                           <span className="font-medium">Status:</span>{" "}
-                          {registration.status || "Confirmed"}
+                          { "Confirmed"}
                         </div>
                         <Link
-                          href={`/events/${registration.events?.id}`}
+                          href={`/events`}
                           className="text-purple-400 hover:text-purple-300 text-sm"
                         >
                           View Details →

@@ -8,9 +8,9 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { TextPlugin } from "gsap/TextPlugin";
 import { MotionPathPlugin } from "gsap/MotionPathPlugin";
 import Auth from "./components/Auth";
-import Dashboard from "./components/Dashboard";
 import { supabase } from "./utils/supabaseClient";
 import Link from "next/link";
+import { User } from "@supabase/supabase-js";
 
 // Register GSAP plugins
 if (typeof window !== "undefined") {
@@ -165,7 +165,7 @@ export default function Home() {
     null
   );
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>();
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,

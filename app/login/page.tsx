@@ -19,7 +19,7 @@ export default function Login() {
         <Auth initialMode="login" />
         
         <p className="text-center mt-8 text-blue-200">
-          Don't have an account? <Link href="/register" className="text-purple-400 hover:text-purple-300">Register here</Link>
+          Don&apos;t have an account? <Link href="/register" className="text-purple-400 hover:text-purple-300">Register here</Link>
         </p>
       </div>
     </div>

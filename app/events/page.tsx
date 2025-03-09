@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import events from '../data/events';
 import toast, { Toaster } from 'react-hot-toast';
+import { User } from '@supabase/supabase-js';
 
 
 const anta = Anta({
@@ -20,7 +21,7 @@ const anta = Anta({
 export default function Events() {
   const [selectedEvent, setSelectedEvent] = useState<typeof events[0] | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [registeredEvents, setRegisteredEvents] = useState<number[]>([]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState('unpaid');
