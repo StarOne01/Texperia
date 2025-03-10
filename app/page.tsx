@@ -752,7 +752,7 @@ export default function Home() {
             <div
               key={event.id}
               className="event-box opacity-0 translate-y-10 relative bg-gradient-to-br from-blue-900/30 to-purple-900/30 rounded-xl p-6 cursor-pointer backdrop-blur-sm border border-blue-500/20 overflow-hidden group"
-              onClick={() => setSelectedEvent(event)}
+              onClick={() =>{ setSelectedEvent(event); setIsModalOpen(true);}}
               style={{ "--delay": `${index * 0.1}s` } as React.CSSProperties}
             >
               <div
