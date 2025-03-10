@@ -1,6 +1,8 @@
 'use client';
 import { useState } from 'react';
 import { supabase } from '../utils/supabaseClient';
+import { useRouter } from 'next/navigation';
+import toast, { Toaster } from 'react-hot-toast';
 
 interface AuthProps {
   initialMode?: 'login' | 'register';
@@ -12,9 +14,12 @@ export default function Auth({ initialMode = 'login' }: AuthProps) {
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [college, setCollege] = useState('');
+  const [phone, setPhone] = useState('');
+  const [yearOfStudy, setYearOfStudy] = useState('');
   const [isLogin, setIsLogin] = useState(initialMode === 'login');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const router = useRouter();
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,25 +35,57 @@ export default function Auth({ initialMode = 'login' }: AuthProps) {
         });
         
         if (error) throw error;
-        setMessage('Login successful!');
-        window.location.href = '/dashboard'
+        toast.success('Login successful!');
+        router.push('/dashboard');
       } else {
+        // Validate phone number
+        const phonePattern = /^[0-9]{10}$/;
+        if (!phonePattern.test(phone)) {
+          throw new Error('Please enter a valid 10-digit phone number');
+        }
+        
         // Sign up the user
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
+            data: {
+              full_name: name,
+              college: college,
+              phone: phone,
+              year_of_study: yearOfStudy
+            },
             emailRedirectTo: `${window.location.origin}/dashboard`,
           }
         });
         
         if (error) throw error;
-      
         
-        setMessage('Check your email for the confirmation link');
+        // Also create a profile entry in the profiles table
+        if (data.user) {
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .insert([
+              {
+                id: data.user.id,
+                email: email,
+                full_name: name,
+                college: college,
+                phone: phone,
+                year_of_study: yearOfStudy,
+                created_at: new Date().toISOString()
+              },
+            ]);
+            
+          if (profileError) {
+            console.error('Error creating profile:', profileError);
+          }
+        }
+        
+        toast.success('Check your email for the confirmation link');
       }
     } catch (error: any) {
-      setError(error.message || 'An error occurred');
+      toast.error(error.message || 'An error occurred');
     } finally {
       setLoading(false);
     }
@@ -56,13 +93,24 @@ export default function Auth({ initialMode = 'login' }: AuthProps) {
 
   return (
     <div className="bg-gradient-to-br from-blue-900/30 to-purple-900/30 rounded-xl p-8 border border-blue-500/30 backdrop-blur-sm max-w-md mx-auto">
+            <Toaster
+        position="top-right"
+        toastOptions={{
+          className: "backdrop-blur-md bg-blue-900/50 text-blue-200 border border-blue-500/30",
+          duration: 3000,
+          style: {
+            background: "rgba(26, 32, 44, 0.8)",
+            color: "#90cdf4",
+            backdropFilter: "blur(8px)",
+            border: "1px solid rgba(66, 153, 225, 0.3)",
+          },
+        }}
+      />
       <h2 className="text-2xl font-bold mb-6 text-center text-blue-300">
         {isLogin ? 'Login' : 'Register'} for Texperia
       </h2>
       
-      {error && <div className="bg-red-500/20 border border-red-500 text-red-200 p-3 rounded mb-4">{error}</div>}
-      {message && <div className="bg-green-500/20 border border-green-500 text-green-200 p-3 rounded mb-4">{message}</div>}
-      
+
       <form onSubmit={handleAuth} className="space-y-4">
         <div>
           <label className="block text-blue-300 mb-1">Email</label>
@@ -89,7 +137,7 @@ export default function Auth({ initialMode = 'login' }: AuthProps) {
         {!isLogin && (
           <>
             <div>
-              <label className="block text-blue-300 mb-1">Name</label>
+              <label className="block text-blue-300 mb-1">Full Name</label>
               <input
                 type="text"
                 value={name}
@@ -109,15 +157,47 @@ export default function Auth({ initialMode = 'login' }: AuthProps) {
                 required
               />
             </div>
+            
+            <div>
+              <label className="block text-blue-300 mb-1">Phone Number</label>
+              <input
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className="w-full bg-blue-900/30 border border-blue-500/30 rounded p-2 text-white"
+                placeholder="10-digit mobile number"
+                pattern="[0-9]{10}"
+                title="Please enter a 10-digit phone number"
+                required
+              />
+            </div>
+            
+            <div>
+              <label className="block text-blue-300 mb-1">Year of Study</label>
+              <select
+                value={yearOfStudy}
+                onChange={(e) => setYearOfStudy(e.target.value)}
+                className="w-full bg-blue-900/30 border border-blue-500/30 rounded p-2 text-white"
+                required
+              >
+                <option className='bg-black' value="">Select Year</option>
+                <option className='bg-black' value="1">1st Year</option>
+                <option className='bg-black' value="2">2nd Year</option>
+                <option className='bg-black' value="3">3rd Year</option>
+                <option className='bg-black' value="4">4th Year</option>
+                <option className='bg-black' value="5">5th Year</option>
+                <option className='bg-black'   value="pg">Post Graduate</option>
+              </select>
+            </div>
           </>
         )}
         
         <button
           type="submit"
-          className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+          className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold py-2 px-4 rounded"
           disabled={loading}
         >
-          {loading ? 'Loading...' : isLogin ? 'Login' : 'Register'}
+          {loading ? 'Processing...' : isLogin ? 'Login' : 'Register'}
         </button>
       </form>
       
@@ -130,6 +210,18 @@ export default function Auth({ initialMode = 'login' }: AuthProps) {
           {isLogin ? 'Need to register?' : 'Already have an account?'}
         </button>
       </div>
+      
+      {isLogin && (
+        <div className="mt-4 text-center">
+          <button
+            type="button"
+            onClick={() => {/* Add forgot password handler */}}
+            className="text-blue-300 hover:underline text-sm"
+          >
+            Forgot password?
+          </button>
+        </div>
+      )}
     </div>
   );
 }

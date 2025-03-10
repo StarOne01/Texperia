@@ -756,13 +756,13 @@ export default function Home() {
                           <span className="w-8 h-8 flex items-center justify-center rounded-lg bg-blue-500/20">
                             📅
                           </span>
-                          <span>March 15-16, 2025</span>
+                          <span>March 19-20, 2025</span>
                         </li>
                         <li className="flex items-center gap-3">
                           <span className="w-8 h-8 flex items-center justify-center rounded-lg bg-blue-500/20">
                             🏆
                           </span>
-                          <span>Prizes worth ₹50,000</span>
+                          <span>Prizes worth ₹2,000</span>
                         </li>
                         <li className="flex items-center gap-3">
                           <span className="w-8 h-8 flex items-center justify-center rounded-lg bg-blue-500/20">
@@ -806,7 +806,7 @@ export default function Home() {
                             <p className="font-semibold text-cyan-300">
                               Registration Deadline
                             </p>
-                            <p className="text-cyan-100/70">March 10, 2025</p>
+                            <p className="text-cyan-100/70">March 19, 2025</p>
                           </div>
                         </div>
                         <div className="flex items-start gap-3">
@@ -816,7 +816,7 @@ export default function Home() {
                               Event Start
                             </p>
                             <p className="text-cyan-100/70">
-                              March 15, 9:00 AM
+                              March 19, 9:00 AM
                             </p>
                           </div>
                         </div>
@@ -1092,23 +1092,33 @@ export default function Home() {
               </h3>
               <ul className="space-y-2">
                 <li>
-                  <p className="text-blue-200/70">Abishek</p>
+                  <p className="text-blue-200/70">Mr. Abishek</p>
                   <p className="text-blue-200/50 text-sm">+91 90038 94744</p>
-                  <p className="text-blue-200/50 text-sm">@snsct.org</p>
                 </li>
                 <li>
-                  <p className="text-blue-200/70">Jane Smith</p>
-                  <p className="text-blue-200/50 text-sm">+1 987 654 321</p>
-                  <p className="text-blue-200/50 text-sm">
-                    jane.smith@example.com
-                  </p>
+                  <p className="text-blue-200/70">Ms.Aboorva.V </p>
+                  <p className="text-blue-200/50 text-sm">+91  88383 83199</p>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-xl font-bold mb-4 text-blue-300">
+                Staff Coordinators
+              </h3>
+              <ul className="space-y-2">
+                <li>
+                  <p className="text-blue-200/70">Mr.R.Satheesh kumar AP/EEE</p>
+                </li>
+                <li>
+                  <p className="text-blue-200/70">Mrs.B.Christyjuliet AP/EEE</p>
                 </li>
               </ul>
             </div>
           </div>
 
           <p className="text-center text-blue-300/70">
-            TECHXPERIA © {new Date().getFullYear()} | Where Technology Meets
+            TEXPERIA © {new Date().getFullYear()} | Where Technology Meets
             Imagination
           </p>
         </div>

@@ -94,8 +94,6 @@ export default function Events() {
       toast.error(`Unregistered from ${events.find(e => e.id === eventId)?.title}`); 
       // Update the local state
       setRegisteredEvents(updatedEvents);
-      
-      
     } catch (error) {
       console.error("Error removing event registration:", error);
     }
@@ -671,14 +669,24 @@ export default function Events() {
                 </div>
                 
                 <div>
-                  <h3 className="text-xl font-semibold text-blue-300 mb-3">Student Coordinators</h3>
+                  <h3 className="text-xl font-semibold text-blue-300 mb-3">Staff Coordinators</h3>
                   <div className="space-y-3">
+                    {selectedEvent.staffCoordinators.map((coordinator, idx) => (
+                      <div key={idx} className="flex flex-col">
+                        <div className="text-blue-200 font-medium">{coordinator.name}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <div>
+                  <h3 className="text-xl font-semibold text-blue-300 mt-5 mb-3">Student Coordinators</h3>
+                  <div className="space-y-2">
                     {selectedEvent.coordinators.map((coordinator, idx) => (
                       <div key={idx} className="flex flex-col">
                         <div className="text-blue-200 font-medium">{coordinator.name}</div>
                         <div className="text-blue-400 text-sm">{coordinator.phone}</div>
                       </div>
                     ))}
+                  </div>
                   </div>
                 </div>
               </div>

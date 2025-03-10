@@ -9,12 +9,42 @@ import { useRouter } from "next/navigation";
 import events from "../data/events";
 import toast, { Toaster } from "react-hot-toast"; // Add this import
 import { User } from "@supabase/supabase-js";
+import { v4 as uuidv4 } from 'uuid';
+import MemberDetailsModal from './components/MemberDetailsModal';
 
 const anta = Anta({
   weight: "400",
   subsets: ["latin"],
 });
+// Add Team type definition
+type TeamMember = {
+  id: string;
+  email: string;
+  name?: string;
+  role: 'leader' | 'member';
+  department?: string;
+  skills?: string[];
+  phone?: string;
+  position?: string;
+  bio?: string;
+  status?: 'active' | 'invited' | 'pending';
+  joinedAt?: string;
+};
 
+type Team = {
+  id: string;
+  name: string;
+  event_id: number;
+  created_at: string;
+  created_by: string;
+  members: TeamMember[];
+};
+type MemberDetailsModalProps = {
+  member: TeamMember | null;
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (updatedMember: TeamMember) => Promise<void>;
+};
 export default function Dashboard() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -23,6 +53,20 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("events");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const router = useRouter();
+  
+  // Add team state
+  const [teams, setTeams] = useState<Team[]>([]);
+  const [isCreatingTeam, setIsCreatingTeam] = useState(false);
+  const [newTeamName, setNewTeamName] = useState('');
+  const [newTeamEventId,  setNewTeamEventId] = useState<number | null>(null);
+  const [newMemberEmail, setNewMemberEmail] = useState('');
+  const [isInviting, setIsInviting] = useState(false);
+  const [loadingTeams, setLoadingTeams] = useState(false);
+
+  // Add new state variables
+  const [isEditingMember, setIsEditingMember] = useState(false);
+  const [currentEditMember, setCurrentEditMember] = useState<TeamMember | null>(null);
+  const [currentEditTeamId, setCurrentEditTeamId] = useState<string | null>(null);
 
   // Replace the random circuit nodes with deterministic values
   const circuitNodes = useMemo(() => {
@@ -104,6 +148,10 @@ export default function Dashboard() {
         data.session.user.id,
         data.session.user.email
       );
+      
+      // Fetch teams when user is authenticated
+      await fetchUserTeams(data.session.user.id);
+      
       setLoading(false);
     };
 
@@ -240,6 +288,283 @@ export default function Dashboard() {
     toast.success("New team created successfully!");
   };
 
+  // Add function to fetch user teams
+  const fetchUserTeams = async (userId: string) => {
+    setLoadingTeams(true);
+    
+    try {
+      // Get teams where the user is either creator or member
+      const { data, error } = await supabase
+        .from('teams')
+        .select('*')
+        .or(`created_by.eq.${userId},members.cs.{"email":"${user?.email}"}`)
+        
+      if (error) {
+        toast.error("Failed to load your teams");
+        console.error("Team fetch error:", error);
+        return;
+      }
+      
+      setTeams(data || []);
+    } catch (err) {
+      console.error("Error fetching teams:", err);
+      toast.error("Something went wrong while loading your teams");
+    } finally {
+      setLoadingTeams(false);
+    }
+  };
+
+  // Add function to create a team
+  const createTeam = async () => {
+    if (!user || !newTeamName || !newTeamEventId) {
+      toast.error("Please provide a team name and select an event");
+      return;
+    }
+    
+    const toastId = toast.loading("Creating your team...");
+    
+    try {
+      // Create team with leader as first team member
+      const newTeam = {
+        name: newTeamName,
+        event_id: newTeamEventId,
+        created_by: user.id,
+        created_at: new Date().toISOString(),
+        members: [{
+          id: uuidv4(), // You'll need to import { v4 as uuidv4 } from 'uuid'
+          email: user.email || '',
+          name: user.user_metadata?.name || user.email?.split('@')[0] || 'Team Leader',
+          role: 'leader'
+        }]
+      };
+      
+      const { data, error } = await supabase
+        .from('teams')
+        .insert(newTeam)
+        .select();
+        
+      if (error) {
+        toast.error("Failed to create team", { id: toastId });
+        console.error("Team creation error:", error);
+        return;
+      }
+      
+      // Update local state
+      await fetchUserTeams(user.id);
+      
+      toast.success("Team created successfully!", { id: toastId });
+      setIsCreatingTeam(false);
+      setNewTeamName('');
+      setNewTeamEventId(null);
+    } catch (err) {
+      console.error("Error creating team:", err);
+      toast.error("Something went wrong", { id: toastId });
+    }
+  };
+
+  // Function to add a team member
+  const addMember = async (teamId: string | undefined) => {
+    if (!newMemberEmail || !teamId) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+    
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(newMemberEmail)) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+    
+    setIsInviting(true);
+    const toastId = toast.loading(`Adding ${newMemberEmail}...`);
+    
+    try {
+      // 1. Get the current team
+      const { data: teamData, error: teamError } = await supabase
+        .from('teams')
+        .select('*')
+        .eq('id', teamId)
+        .single();
+        
+      if (teamError) {
+        toast.error("Failed to find team", { id: toastId });
+        setIsInviting(false);
+        return;
+      }
+      
+      // 2. Check if member already exists
+      const isAlreadyMember = teamData.members.some(
+        (member: TeamMember) => member.email === newMemberEmail
+      );
+      
+      if (isAlreadyMember) {
+        toast.error("This person is already in the team", { id: toastId });
+        setIsInviting(false);
+        return;
+      }
+      
+      // 3. Add the new member to the members array with enhanced fields
+      const updatedMembers = [
+        ...teamData.members, 
+        {
+          id: uuidv4(),
+          email: newMemberEmail,
+          role: 'member',
+          status: 'invited',
+          joinedAt: new Date().toISOString()
+        }
+      ];
+      
+      // 4. Update the team record
+      const { error: updateError } = await supabase
+        .from('teams')
+        .update({ members: updatedMembers })
+        .eq('id', teamId);
+        
+      if (updateError) {
+        toast.error("Failed to add team member", { id: toastId });
+        setIsInviting(false);
+        return;
+      }
+      
+      // 5. Refresh teams data
+      await fetchUserTeams(user!.id);
+      
+      toast.success(`${newMemberEmail} added to team`, { id: toastId });
+      setNewMemberEmail(''); // Clear the input field
+    } catch (err) {
+      console.error("Error adding team member:", err);
+      toast.error("Something went wrong", { id: toastId });
+    } finally {
+      setIsInviting(false);
+    }
+  };
+
+  // Function to remove team member
+  const removeTeamMember = async (teamId: string, memberEmail: string) => {
+    const toastId = toast.loading(`Removing ${memberEmail}...`);
+    
+    try {
+      // 1. Get the current team
+      const { data: teamData, error: teamError } = await supabase
+        .from('teams')
+        .select('*')
+        .eq('id', teamId)
+        .single();
+        
+      if (teamError) {
+        toast.error("Failed to find team", { id: toastId });
+        return;
+      }
+      
+      // 2. Filter out the member to remove
+      const updatedMembers = teamData.members.filter(
+        (member: TeamMember) => member.email !== memberEmail
+      );
+      
+      // 3. Update the team record
+      const { error: updateError } = await supabase
+        .from('teams')
+        .update({ members: updatedMembers })
+        .eq('id', teamId);
+        
+      if (updateError) {
+        toast.error("Failed to remove team member", { id: toastId });
+        return;
+      }
+      
+      // 4. Refresh teams data
+      await fetchUserTeams(user!.id);
+      
+      toast.success(`${memberEmail} removed from team`, { id: toastId });
+    } catch (err) {
+      console.error("Error removing team member:", err);
+      toast.error("Something went wrong", { id: toastId });
+    }
+  };
+
+  // Function to delete team
+  const deleteTeam = async (teamId: string) => {
+    const toastId = toast.loading("Deleting team...");
+    
+    try {
+      // Simple delete since all team info is in one row
+      const { error } = await supabase
+        .from('teams')
+        .delete()
+        .eq('id', teamId);
+        
+      if (error) {
+        toast.error("Failed to delete team", { id: toastId });
+        return;
+      }
+      
+      // Update state
+      setTeams(prevTeams => prevTeams.filter(team => team.id !== teamId));
+      
+      toast.success("Team deleted successfully", { id: toastId });
+    } catch (err) {
+      console.error("Error deleting team:", err);
+      toast.error("Something went wrong", { id: toastId });
+    }
+  };
+
+  // Function to update member details
+  const updateMemberDetails = async (updatedMember: TeamMember) => {
+    if (!currentEditTeamId) return;
+    
+    const toastId = toast.loading("Updating member details...");
+    
+    try {
+      // 1. Get the current team
+      const { data: teamData, error: teamError } = await supabase
+        .from('teams')
+        .select('*')
+        .eq('id', currentEditTeamId)
+        .single();
+        
+      if (teamError) {
+        toast.error("Failed to find team", { id: toastId });
+        return;
+      }
+      
+      // 2. Update the member in the members array
+      const updatedMembers = teamData.members.map((member: TeamMember) => 
+        member.id === updatedMember.id ? updatedMember : member
+      );
+      
+      // 3. Update the team record
+      const { error: updateError } = await supabase
+        .from('teams')
+        .update({ members: updatedMembers })
+        .eq('id', currentEditTeamId);
+        
+      if (updateError) {
+        toast.error("Failed to update member details", { id: toastId });
+        return;
+      }
+      
+      // 4. Refresh teams data
+      await fetchUserTeams(user!.id);
+      
+      toast.success("Member details updated successfully", { id: toastId });
+      setIsEditingMember(false);
+      setCurrentEditMember(null);
+      setCurrentEditTeamId(null);
+    } catch (err) {
+      console.error("Error updating member details:", err);
+      toast.error("Something went wrong", { id: toastId });
+    }
+  };
+  
+  // Function to open member details modal
+  const openMemberDetailsModal = (teamId: string, member: TeamMember) => {
+    setCurrentEditTeamId(teamId);
+    setCurrentEditMember(member);
+    setIsEditingMember(true);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-black text-white p-8">
@@ -260,6 +585,7 @@ export default function Dashboard() {
   }
 
   return (
+    <>
     <div className="min-h-screen bg-black text-white">
       {/* Toast Component */}
       <Toaster
@@ -410,16 +736,6 @@ export default function Dashboard() {
             My Events
           </button>
           <button
-            onClick={() => setActiveTab("profile")}
-            className={`px-4 py-2 rounded-lg transition-colors ${
-              activeTab === "profile"
-                ? "bg-blue-900/50 text-blue-200"
-                : "text-blue-400 hover:text-blue-300"
-            }`}
-          >
-            Profile
-          </button>
-          <button
             onClick={() => setActiveTab("teams")}
             className={`px-4 py-2 rounded-lg transition-colors ${
               activeTab === "teams"
@@ -527,24 +843,20 @@ export default function Dashboard() {
                           <span className="font-medium">Status:</span>{" "}
                           { "Confirmed"}
                         </div>
-                        <Link
-                          href={`/events`}
-                          className="text-purple-400 hover:text-purple-300 text-sm"
-                        >
-                          View Details →
-                        </Link>
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
             )}
+            <div className="mt-8">
             <Link
               href="/events"
               className="bg-gradient-to-r mt-120 from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 px-4 py-2 rounded-lg text-white font-medium"
             >
               Browse More Events
             </Link>
+            </div>
 
             <div className="mt-12">
               <h2 className="text-2xl font-semibold text-blue-300 mb-6">
@@ -595,99 +907,276 @@ export default function Dashboard() {
               Your Teams
             </h2>
 
-            <div className="mb-8">
-              <div className="bg-blue-900/30 border border-blue-500/20 rounded-xl p-6 mb-6">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-xl font-semibold text-blue-300">
-                    Team Quantum
-                  </h3>
-                  <span className="bg-green-500/20 text-green-300 px-3 py-1 text-xs font-medium rounded-lg">
-                    Active
-                  </span>
-                </div>
-                <p className="text-blue-200/70 text-sm mb-4">
-                  Participating in: Hackathon
-                </p>
-
-                <h4 className="text-blue-400 text-sm font-medium mb-2">
-                  Members:
-                </h4>
-                <div className="space-y-2 mb-4">
-                  <div className="flex items-center justify-between bg-blue-900/20 rounded-lg p-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center text-blue-300 font-medium">
-                        JD
-                      </div>
-                      <div>
-                        <div className="text-blue-200">John Doe (You)</div>
-                        <div className="text-blue-400 text-xs">Team Leader</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between bg-blue-900/20 rounded-lg p-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center text-blue-300 font-medium">
-                        AS
-                      </div>
-                      <div>
-                        <div className="text-blue-200">Alice Smith</div>
-                        <div className="text-blue-400 text-xs">Member</div>
-                      </div>
-                    </div>
-                    <button 
-                      onClick={() => handleRemoveTeamMember("Alice Smith")} 
-                      className="text-red-400 hover:text-red-300 text-sm"
-                    >
-                      Remove
-                    </button>
-                  </div>
-
-                  <div className="flex items-center justify-between bg-blue-900/20 rounded-lg p-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center text-blue-300 font-medium">
-                        RJ
-                      </div>
-                      <div>
-                        <div className="text-blue-200">Robert Johnson</div>
-                        <div className="text-blue-400 text-xs">Member</div>
-                      </div>
-                    </div>
-                    <button 
-                      onClick={() => handleRemoveTeamMember("Robert Johnson")} 
-                      className="text-red-400 hover:text-red-300 text-sm"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                </div>
-
-                <div className="flex justify-end gap-4 mt-6">
-                  <button 
-                    onClick={handleDeleteTeam}
-                    className="border border-red-500/30 text-red-400 hover:bg-red-900/20 px-4 py-2 rounded-lg text-sm"
-                  >
-                    Delete Team
-                  </button>
-                  <button 
-                    onClick={() => toast.success("Invitation sent!")}
-                    className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white text-sm"
-                  >
-                    Invite Member
-                  </button>
-                </div>
+            {loadingTeams ? (
+              <div className="flex justify-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
               </div>
+            ) : (
+              <div className="mb-8">
+                {teams.length > 0 ? (
+                  teams.map((team) => (
+                    <div key={team.id} className="bg-blue-900/30 border border-blue-500/20 rounded-xl p-6 mb-6">
+                      <div className="flex justify-between items-center mb-4">
+                        <h3 className="text-xl font-semibold text-blue-300">
+                          {team.name}
+                        </h3>
+                        <span className="bg-green-500/20 text-green-300 px-3 py-1 text-xs font-medium rounded-lg">
+                          Active
+                        </span>
+                      </div>
+                      <p className="text-blue-200/70 text-sm mb-4">
+                        Participating in: {events.find(e => e.id === team.event_id)?.title || 'Unknown Event'}
+                      </p>
 
-              <button 
-                onClick={handleCreateTeam}
-                className="w-full border border-dashed border-blue-500/30 text-blue-400 hover:text-blue-300 hover:border-blue-500/50 p-4 rounded-xl"
-              >
-                + Create New Team
-              </button>
-            </div>
+                      <h4 className="text-blue-400 text-sm font-medium mb-2">
+                        Members:
+                      </h4>
+                      <div className="space-y-2 mb-4">
+                        {team.members.map((member) => (
+                          <div key={member.email} className="flex flex-col bg-blue-900/20 rounded-lg p-4 mb-2">
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-blue-500/20 rounded-full flex items-center justify-center text-blue-300 font-medium">
+                                  {member.name?.substring(0, 2).toUpperCase() || member.email.substring(0, 2).toUpperCase()}
+                                </div>
+                                <div>
+                                  <div className="text-blue-200 font-medium">
+                                    {member.name || member.email.split('@')[0]}
+                                    {member.email === user?.email && " (You)"}
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <span className={`text-xs px-2 py-0.5 rounded-full ${
+                                      member.role === 'leader' 
+                                        ? 'bg-purple-500/20 text-purple-300' 
+                                        : 'bg-blue-500/20 text-blue-300'
+                                    }`}>
+                                      {member.role}
+                                    </span>
+                                    {member.status && (
+                                      <span className={`text-xs px-2 py-0.5 rounded-full ${
+                                        member.status === 'active' ? 'bg-green-500/20 text-green-300' : 
+                                        member.status === 'invited' ? 'bg-yellow-500/20 text-yellow-300' :
+                                        'bg-gray-500/20 text-gray-300'
+                                      }`}>
+                                        {member.status}
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              <div className="flex items-center gap-2">
+                                <button 
+                                  onClick={() => openMemberDetailsModal(team.id, member)}
+                                  className="text-blue-400 hover:text-blue-300 text-sm"
+                                >
+                                  Edit
+                                </button>
+                                
+                                {member.role !== 'leader' && member.email !== user?.email && (
+                                  <button 
+                                    onClick={() => {
+                                      toast((t) => (
+                                        <div className="flex items-center gap-3">
+                                          <span>Remove {member.name || member.email} from team?</span>
+                                          <button 
+                                            className="bg-red-500 text-white px-2 py-1 rounded text-xs"
+                                            onClick={() => {
+                                              toast.dismiss(t.id);
+                                              removeTeamMember(team.id, member.email);
+                                            }}
+                                          >
+                                            Confirm
+                                          </button>
+                                          <button 
+                                            className="bg-gray-500 text-white px-2 py-1 rounded text-xs"
+                                            onClick={() => toast.dismiss(t.id)}
+                                          >
+                                            Cancel
+                                          </button>
+                                        </div>
+                                      ), { duration: 5000 });
+                                    }}
+                                    className="text-red-400 hover:text-red-300 text-sm"
+                                  >
+                                    Remove
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                            
+                            {/* Additional member details */}
+                            {(member.department || member.position || member.skills?.length) && (
+                              <div className="pl-12 mt-1 space-y-1">
+                                {member.department && member.position && (
+                                  <div className="text-xs text-blue-300/80">
+                                    {member.position} at {member.department}
+                                  </div>
+                                )}
+                                
+                                {member.department && !member.position && (
+                                  <div className="text-xs text-blue-300/80">
+                                    {member.department}
+                                  </div>
+                                )}
+                                
+                                {!member.department && member.position && (
+                                  <div className="text-xs text-blue-300/80">
+                                    {member.position}
+                                  </div>
+                                )}
+                                
+                                {member.skills && member.skills.length > 0 && (
+                                  <div className="flex flex-wrap gap-1 mt-1">
+                                    {member.skills.map(skill => (
+                                      <span key={skill} className="text-xs bg-blue-800/30 text-blue-300 px-2 py-0.5 rounded">
+                                        {skill}
+                                      </span>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Invite member form */}
+                      <div className="mt-4 pt-4 border-t border-blue-500/20">
+                        <div className="flex flex-col sm:flex-row gap-2">
+                          <input
+                            type="email"
+                            placeholder="team.member@example.com"
+                            className="flex-grow bg-blue-900/20 border border-blue-500/30 rounded-lg px-3 py-2 text-sm text-blue-200 focus:outline-none focus:border-blue-400"
+                            value={newMemberEmail}
+                            onChange={(e) => setNewMemberEmail(e.target.value)}
+                          />
+                          <button 
+                            onClick={() => addMember(team.id)} 
+                            disabled={isInviting}
+                            className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-900 disabled:opacity-50 px-4 py-2 rounded-lg text-white text-sm"
+                          >
+                            {isInviting ? "Adding..." : "Add Member"}
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="flex justify-end gap-4 mt-6">
+                        <button 
+                          onClick={() => {
+                            toast((t) => (
+                              <div className="flex items-center gap-3">
+                                <span>Delete {team.name}? This cannot be undone.</span>
+                                <button 
+                                  className="bg-red-500 text-white px-2 py-1 rounded text-xs"
+                                  onClick={() => {
+                                    toast.dismiss(t.id);
+                                    deleteTeam(team.id);
+                                  }}
+                                >
+                                  Delete
+                                </button>
+                                <button 
+                                  className="bg-gray-500 text-white px-2 py-1 rounded text-xs"
+                                  onClick={() => toast.dismiss(t.id)}
+                                >
+                                  Cancel
+                                </button>
+                              </div>
+                            ), { duration: 5000 });
+                          }}
+                          className="border border-red-500/30 text-red-400 hover:bg-red-900/20 px-4 py-2 rounded-lg text-sm"
+                        >
+                          Delete Team
+                        </button>
+                      </div>
+                    </div>
+                    
+                  ))
+                ) : (
+                  <div className="bg-blue-900/20 border border-blue-500/30 rounded-xl p-8 text-center">
+                    <div className="text-5xl mb-4">👥</div>
+                    <h3 className="text-xl font-semibold text-blue-300 mb-2">
+                      No Teams Yet
+                    </h3>
+                    <p className="text-blue-200 mb-6">
+                      Create a team to participate in team events
+                    </p>
+                  </div>
+                )})
+
+                {isCreatingTeam ? (
+                  <div className="bg-blue-900/30 border border-blue-500/30 rounded-xl p-6">
+                    <h3 className="text-lg font-semibold text-blue-300 mb-4">Create New Team</h3>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-blue-300 text-sm mb-2">Team Name</label>
+                        <input 
+                          type="text"
+                          value={newTeamName}
+                          onChange={(e) => setNewTeamName(e.target.value)}
+                          className="w-full bg-blue-900/20 border border-blue-500/30 rounded-lg px-3 py-2 text-blue-200 focus:outline-none focus:border-blue-400"
+                          placeholder="Enter team name"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-blue-300 text-sm mb-2">Select Event</label>
+                        <select
+                          value={newTeamEventId || ''}
+                          onChange={(e) => setNewTeamEventId(Number(e.target.value))}
+                          className="w-full bg-blue-900/20 border border-blue-500/30 rounded-lg px-3 py-2 text-blue-200 focus:outline-none focus:border-blue-400"
+                        >
+                          <option value="">Select an event</option>
+                          {events.filter(event => event.isTeamEvent).map(event => (
+                            <option key={event.id} value={event.id}>
+                              {event.title}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      
+                      <div className="flex justify-end gap-3 mt-4">
+                        <button
+                          onClick={() => setIsCreatingTeam(false)}
+                          className="border border-blue-500/30 text-blue-300 hover:bg-blue-900/20 px-4 py-2 rounded-lg text-sm"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={createTeam}
+                          className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white text-sm"
+                        >
+                          Create Team
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <button 
+                    onClick={() => setIsCreatingTeam(true)}
+                    className="w-full border border-dashed border-blue-500/30 text-blue-400 hover:text-blue-300 hover:border-blue-500/50 p-4 rounded-xl"
+                  >
+                    + Create New Team
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         )}
       </main>
     </div>
+    {isEditingMember && (
+      <MemberDetailsModal 
+        member={currentEditMember} 
+        isOpen={isEditingMember}
+        onClose={() => {
+          setIsEditingMember(false);
+          setCurrentEditMember(null);
+        }}
+        onSave={updateMemberDetails}
+      />
+    )}
+    </>
   );
 }
