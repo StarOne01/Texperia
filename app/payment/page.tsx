@@ -8,6 +8,8 @@ import Link from 'next/link';
 import { Anta } from 'next/font/google';
 import toast, { Toaster } from "react-hot-toast";
 import { User } from '@supabase/supabase-js';
+import Image from 'next/image';
+import gpay from '../../public/gpay.jpeg';
 
 const anta = Anta({
   weight: '400',
@@ -357,7 +359,7 @@ export default function PaymentPage() {
             <div className="mb-6 p-4 bg-blue-900/30 rounded-lg border border-blue-500/20">
               <h3 className="font-medium text-blue-400 mb-2">Payment Instructions</h3>
               <p className="mb-3 text-blue-200">Please transfer ₹{totalAmount} using one of the following methods:</p>
-
+              <Image src={gpay} className='mb-5' alt="Payment Methods" width={300} height={300} />
               <div className="space-y-4 text-blue-200">
                 <div>
                   <h4 className="font-medium text-blue-300">GPay / UPI</h4>
