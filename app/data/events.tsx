@@ -194,7 +194,7 @@ const events = [
       icon: "/icons/circuit.svg",
       color: "#805ad5",
       isTeamEvent: true,
-      date: "March 15, 2025",
+      date: "March 20, 2025",
       time: "9:00 AM - 12:45 PM",
       venue: "Will be announced on the day of event",
       prizes: "₹3,000+",
@@ -335,3 +335,4 @@ const events = [
   ];
 
 export default events;
+

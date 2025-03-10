@@ -77,7 +77,7 @@ export default function RootLayout({
             </div>
             <div>
               <h3 className="text-xl font-bold mb-4 text-blue-300">
-                Contact Coordinators
+                Student Coordinators
               </h3>
               <ul className="space-y-2">
                 <li>

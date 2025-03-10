@@ -221,7 +221,33 @@ export default function PaymentPage() {
 
 
   const registeredEventDetails = events.filter(event => registeredEvents.includes(event.id));
-  const totalAmount = 300;
+
+  const calculateTotalAmount = () => {
+    // Check if registered for the workshop (ID: 10)
+    const hasWorkshop = registeredEventDetails.some(event => event.id === 10);
+    
+    if (hasWorkshop) {
+      // Workshop costs 300 regardless of other events
+      return 300;
+    }
+    
+    // For regular events, check which days have events
+    const registeredDays = new Set();
+    
+    registeredEventDetails.forEach(event => {
+      if (event.date === "March 19, 2025") {
+        registeredDays.add("day1");
+      } else if (event.date === "March 20, 2025") {
+        registeredDays.add("day2");
+      }
+    });
+    
+    // 300 per day
+    return registeredDays.size * 300;
+  };
+  
+  const totalAmount = calculateTotalAmount();
+
 
   return (
     <div className="min-h-screen bg-black text-white p-8">
