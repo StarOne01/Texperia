@@ -855,7 +855,7 @@ export default function Home() {
                     </div>
                     <div className="text-center">
                       <div className="text-4xl font-bold text-purple-300 mb-2">
-                        ₹5L+
+                        Attractive Prizes!
                       </div>
                       <div className="text-purple-200">Prize Pool</div>
                     </div>
@@ -973,7 +973,7 @@ export default function Home() {
               </h3>
               <ul className="space-y-2">
                 <li>
-                  <p className="text-blue-200/70">Mr. Abishek</p>
+                  <p className="text-blue-200/70">Mr. Abishek. R</p>
                   <p className="text-blue-200/50 text-sm">+91 90038 94744</p>
                 </li>
                 <li>
