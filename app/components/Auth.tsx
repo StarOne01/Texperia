@@ -17,15 +17,42 @@ export default function Auth({ initialMode = 'login' }: AuthProps) {
   const [phone, setPhone] = useState('');
   const [yearOfStudy, setYearOfStudy] = useState('');
   const [isLogin, setIsLogin] = useState(initialMode === 'login');
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const router = useRouter();
+
+  // Validation function
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+    
+    // Common validation for both login and register
+    if (!email.trim()) newErrors.email = "Email is required";
+    else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = "Please enter a valid email";
+    
+    if (!password.trim()) newErrors.password = "Password is required";
+    else if (password.length < 6) newErrors.password = "Password must be at least 6 characters";
+    
+    // Registration-specific validation
+    if (!isLogin) {
+      if (!name.trim()) newErrors.name = "Full name is required";
+      if (!college.trim()) newErrors.college = "College name is required";
+      
+      if (!phone.trim()) newErrors.phone = "Phone number is required";
+      else if (!/^[0-9]{10}$/.test(phone)) newErrors.phone = "Please enter a valid 10-digit number";
+      
+      if (!yearOfStudy) newErrors.yearOfStudy = "Please select your year of study";
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate form before proceeding
+    if (!validateForm()) return;
+    
     setLoading(true);
-    setError('');
-    setMessage('');
     
     try {
       if (isLogin) {
@@ -38,12 +65,6 @@ export default function Auth({ initialMode = 'login' }: AuthProps) {
         toast.success('Login successful!');
         router.push('/dashboard');
       } else {
-        // Validate phone number
-        const phonePattern = /^[0-9]{10}$/;
-        if (!phonePattern.test(phone)) {
-          throw new Error('Please enter a valid 10-digit phone number');
-        }
-        
         // Sign up the user
         const { data, error } = await supabase.auth.signUp({
           email,
@@ -79,6 +100,7 @@ export default function Auth({ initialMode = 'login' }: AuthProps) {
             
           if (profileError) {
             console.error('Error creating profile:', profileError);
+            toast.error('Registration completed, but profile setup failed. Please contact support.');
           }
         }
         
@@ -91,9 +113,16 @@ export default function Auth({ initialMode = 'login' }: AuthProps) {
     }
   };
 
+  // Helper function to display field error
+  const fieldError = (field: string) => {
+    return errors[field] ? (
+      <p className="text-red-400 text-xs mt-1">{errors[field]}</p>
+    ) : null;
+  };
+
   return (
     <div className="bg-gradient-to-br from-blue-900/30 to-purple-900/30 rounded-xl p-8 border border-blue-500/30 backdrop-blur-sm max-w-md mx-auto">
-            <Toaster
+      <Toaster
         position="top-right"
         toastOptions={{
           className: "backdrop-blur-md bg-blue-900/50 text-blue-200 border border-blue-500/30",
@@ -110,74 +139,144 @@ export default function Auth({ initialMode = 'login' }: AuthProps) {
         {isLogin ? 'Login' : 'Register'} for Texperia
       </h2>
       
-
       <form onSubmit={handleAuth} className="space-y-4">
         <div>
-          <label className="block text-blue-300 mb-1">Email</label>
+          <label className="block text-blue-300 mb-1">
+            Email <span className="text-red-400">*</span>
+          </label>
           <input
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full bg-blue-900/30 border border-blue-500/30 rounded p-2 text-white"
+            onChange={(e) => {
+              setEmail(e.target.value);
+              if (errors.email) {
+                const newErrors = {...errors};
+                delete newErrors.email;
+                setErrors(newErrors);
+              }
+            }}
+            className={`w-full bg-blue-900/30 border ${
+              errors.email ? 'border-red-400' : 'border-blue-500/30'
+            } rounded p-2 text-white`}
             required
           />
+          {fieldError('email')}
         </div>
         
         <div>
-          <label className="block text-blue-300 mb-1">Password</label>
+          <label className="block text-blue-300 mb-1">
+            Password <span className="text-red-400">*</span>
+          </label>
           <input
             type="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full bg-blue-900/30 border border-blue-500/30 rounded p-2 text-white"
+            onChange={(e) => {
+              setPassword(e.target.value);
+              if (errors.password) {
+                const newErrors = {...errors};
+                delete newErrors.password;
+                setErrors(newErrors);
+              }
+            }}
+            className={`w-full bg-blue-900/30 border ${
+              errors.password ? 'border-red-400' : 'border-blue-500/30'
+            } rounded p-2 text-white`}
             required
           />
+          {fieldError('password')}
         </div>
         
         {!isLogin && (
           <>
             <div>
-              <label className="block text-blue-300 mb-1">Full Name</label>
+              <label className="block text-blue-300 mb-1">
+                Full Name <span className="text-red-400">*</span>
+              </label>
               <input
                 type="text"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full bg-blue-900/30 border border-blue-500/30 rounded p-2 text-white"
+                onChange={(e) => {
+                  setName(e.target.value);
+                  if (errors.name) {
+                    const newErrors = {...errors};
+                    delete newErrors.name;
+                    setErrors(newErrors);
+                  }
+                }}
+                className={`w-full bg-blue-900/30 border ${
+                  errors.name ? 'border-red-400' : 'border-blue-500/30'
+                } rounded p-2 text-white`}
                 required
               />
+              {fieldError('name')}
             </div>
             
             <div>
-              <label className="block text-blue-300 mb-1">College</label>
+              <label className="block text-blue-300 mb-1">
+                College <span className="text-red-400">*</span>
+              </label>
               <input
                 type="text"
                 value={college}
-                onChange={(e) => setCollege(e.target.value)}
-                className="w-full bg-blue-900/30 border border-blue-500/30 rounded p-2 text-white"
+                onChange={(e) => {
+                  setCollege(e.target.value);
+                  if (errors.college) {
+                    const newErrors = {...errors};
+                    delete newErrors.college;
+                    setErrors(newErrors);
+                  }
+                }}
+                className={`w-full bg-blue-900/30 border ${
+                  errors.college ? 'border-red-400' : 'border-blue-500/30'
+                } rounded p-2 text-white`}
                 required
               />
+              {fieldError('college')}
             </div>
             
             <div>
-              <label className="block text-blue-300 mb-1">Phone Number</label>
+              <label className="block text-blue-300 mb-1">
+                Phone Number <span className="text-red-400">*</span>
+              </label>
               <input
                 type="tel"
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className="w-full bg-blue-900/30 border border-blue-500/30 rounded p-2 text-white"
+                onChange={(e) => {
+                  setPhone(e.target.value);
+                  if (errors.phone) {
+                    const newErrors = {...errors};
+                    delete newErrors.phone;
+                    setErrors(newErrors);
+                  }
+                }}
+                className={`w-full bg-blue-900/30 border ${
+                  errors.phone ? 'border-red-400' : 'border-blue-500/30'
+                } rounded p-2 text-white`}
                 placeholder="10-digit mobile number"
                 pattern="[0-9]{10}"
                 title="Please enter a 10-digit phone number"
                 required
               />
+              {fieldError('phone')}
             </div>
             
             <div>
-              <label className="block text-blue-300 mb-1">Year of Study</label>
+              <label className="block text-blue-300 mb-1">
+                Year of Study <span className="text-red-400">*</span>
+              </label>
               <select
                 value={yearOfStudy}
-                onChange={(e) => setYearOfStudy(e.target.value)}
-                className="w-full bg-blue-900/30 border border-blue-500/30 rounded p-2 text-white"
+                onChange={(e) => {
+                  setYearOfStudy(e.target.value);
+                  if (errors.yearOfStudy) {
+                    const newErrors = {...errors};
+                    delete newErrors.yearOfStudy;
+                    setErrors(newErrors);
+                  }
+                }}
+                className={`w-full bg-blue-900/30 border ${
+                  errors.yearOfStudy ? 'border-red-400' : 'border-blue-500/30'
+                } rounded p-2 text-white`}
                 required
               >
                 <option className='bg-black' value="">Select Year</option>
@@ -186,8 +285,9 @@ export default function Auth({ initialMode = 'login' }: AuthProps) {
                 <option className='bg-black' value="3">3rd Year</option>
                 <option className='bg-black' value="4">4th Year</option>
                 <option className='bg-black' value="5">5th Year</option>
-                <option className='bg-black'   value="pg">Post Graduate</option>
+                <option className='bg-black' value="pg">Post Graduate</option>
               </select>
+              {fieldError('yearOfStudy')}
             </div>
           </>
         )}
@@ -204,7 +304,10 @@ export default function Auth({ initialMode = 'login' }: AuthProps) {
       <div className="mt-4 text-center">
         <button
           type="button"
-          onClick={() => setIsLogin(!isLogin)}
+          onClick={() => {
+            setIsLogin(!isLogin);
+            setErrors({});
+          }}
           className="text-blue-300 hover:underline"
         >
           {isLogin ? 'Need to register?' : 'Already have an account?'}
