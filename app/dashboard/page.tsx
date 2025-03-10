@@ -865,7 +865,7 @@ export default function Dashboard() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-gradient-to-br from-blue-900/30 to-purple-900/30 rounded-xl p-6 border border-blue-500/30">
                   <div className="flex justify-between items-center mb-4">
-                    <div className="text-sm text-blue-400">March 15, 2025</div>
+                    <div className="text-sm text-blue-400">March 19, 2025</div>
                     <div className="bg-blue-500/20 text-blue-300 px-2 py-1 text-xs font-medium rounded-lg">
                       Day 1
                     </div>
@@ -881,7 +881,7 @@ export default function Dashboard() {
 
                 <div className="bg-gradient-to-br from-blue-900/30 to-purple-900/30 rounded-xl p-6 border border-blue-500/30">
                   <div className="flex justify-between items-center mb-4">
-                    <div className="text-sm text-blue-400">March 16, 2025</div>
+                    <div className="text-sm text-blue-400">March 20, 2025</div>
                     <div className="bg-purple-500/20 text-purple-300 px-2 py-1 text-xs font-medium rounded-lg">
                       Day 2
                     </div>
