@@ -11,6 +11,21 @@ import Auth from "./components/Auth";
 import { supabase } from "./utils/supabaseClient";
 import Link from "next/link";
 import { User } from "@supabase/supabase-js";
+import  events from "./data/events";
+
+  
+const getCategoryInfo = (category: string) => {
+  switch (category) {
+    case 'flagship':
+      return { label: 'Flagship Event', color: 'from-purple-600 to-pink-600' };
+    case 'technical':
+      return { label: 'Technical Event', color: 'from-blue-600 to-cyan-600' };
+    case 'non-technical':
+      return { label: 'Non-Technical Event', color: 'from-green-600 to-teal-600' };
+    default:
+      return { label: 'Event', color: 'from-gray-600 to-gray-600' };
+  }
+};
 
 // Register GSAP plugins
 if (typeof window !== "undefined") {
@@ -21,97 +36,6 @@ const anta = Anta({
   weight: "400",
   subsets: ["latin"],
 });
-
-const events = [
-  {
-    id: 1,
-    title: "Paper Presentation",
-    description:
-      "Present your research papers and innovative ideas to experts in the field.",
-    icon: "/icons/paper.svg",
-    color: "#4fd1c5",
-  },
-  {
-    id: 2,
-    title: "Technical Quiz",
-    description:
-      "Test your technical knowledge in this fast-paced, challenging quiz competition.",
-    icon: "/icons/quiz.svg",
-    color: "#38b2ac",
-  },
-  {
-    id: 3,
-    title: "Hackathon",
-    description:
-      "48 hours of coding, innovation, and problem-solving. Build solutions that matter.",
-    icon: "/icons/code.svg",
-    color: "#319795",
-  },
-  {
-    id: 4,
-    title: "Project Presentation",
-    description:
-      "Showcase your engineering projects and get feedback from industry experts.",
-    icon: "/icons/project.svg",
-    color: "#2c7a7b",
-  },
-  {
-    id: 5,
-    title: "Rapid Prototype Challenge",
-    description:
-      "Design, build and demonstrate a working prototype within a limited timeframe.",
-    icon: "/icons/prototype.svg",
-    color: "#285e61",
-  },
-  {
-    id: 6,
-    title: "Poster Presentation",
-    description:
-      "Visualize your ideas through creative posters and win exciting prizes.",
-    icon: "/icons/poster.svg",
-    color: "#234e52",
-  },
-  {
-    id: 7,
-    title: "Circuit Debugging",
-    description:
-      "Find and fix errors in complex electrical circuits against the clock.",
-    icon: "/icons/circuit.svg",
-    color: "#805ad5",
-  },
-  {
-    id: 8,
-    title: "Sketch Your Creativity",
-    description:
-      "Express your technical concepts through artistic sketches and diagrams.",
-    icon: "/icons/sketch.svg",
-    color: "#6b46c1",
-  },
-  {
-    id: 9,
-    title: "CEO Talk",
-    description:
-      "Hear industry leaders share insights on technology trends and career paths.",
-    icon: "/icons/talk.svg",
-    color: "#553c9a",
-  },
-  {
-    id: 10,
-    title: "Workshop",
-    description:
-      "Hands-on sessions on cutting-edge technologies and engineering practices.",
-    icon: "/icons/workshop.svg",
-    color: "#44337a",
-  },
-  {
-    id: 11,
-    title: "Electrical Safety Mime",
-    description:
-      "Creative performances highlighting the importance of electrical safety.",
-    icon: "/icons/safety.svg",
-    color: "#3c366b",
-  },
-];
 
 // Add this function at the top level
 const generateElectronPositions = (count: number) => {
@@ -161,9 +85,7 @@ const faqs = [
 ];
 
 export default function Home() {
-  const [selectedEvent, setSelectedEvent] = useState<(typeof events)[0] | null>(
-    null
-  );
+  const [selectedEvent, setSelectedEvent] = useState<(typeof events)[0] | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [user, setUser] = useState<User | null>();
   const [timeLeft, setTimeLeft] = useState({
@@ -172,6 +94,7 @@ export default function Home() {
     minutes: 0,
     seconds: 0,
   });
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const headerRef = useRef(null);
   const eventsRef = useRef<HTMLDivElement>(null);
   const circuitRef = useRef<SVGSVGElement>(null);
@@ -702,162 +625,120 @@ export default function Home() {
           </div>
         </header>
 
-        <AnimatePresence>
-          {selectedEvent ? (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
+        {/* Event Details Modal */}
+        {isModalOpen && selectedEvent && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div 
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+              onClick={() => setIsModalOpen(false)}
+            ></div>
+            
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              className="fixed overflow-scroll inset-0 z-50 flex items-center justify-center bg-black/90 p-4 md:p-10 backdrop-blur-lg"
-              onClick={() => setSelectedEvent(null)}
+              className="relative bg-gradient-to-br from-blue-900/80 to-purple-900/80 rounded-xl border border-blue-500/30 p-6 max-w-3xl w-full max-h-[90vh] overflow-y-auto"
             >
-              <div
-                className="bg-gradient-to-br from-blue-900/80 to-purple-900/80 rounded-2xl max-w-5xl w-full backdrop-blur-md border border-blue-500/30 relative overflow-hidden"
-                onClick={(e) => e.stopPropagation()}
+              <button 
+                onClick={() => setIsModalOpen(false)}
+                className="absolute top-4 right-4 text-blue-400 hover:text-blue-300"
               >
-                {/* Decorative elements */}
-                <div className="absolute top-0 right-0 w-60 h-60 bg-blue-500/10 rounded-full blur-3xl"></div>
-                <div className="absolute bottom-0 left-0 w-60 h-60 bg-purple-500/10 rounded-full blur-3xl"></div>
-                <div className="absolute top-1/2 left-1/2 w-40 h-40 bg-cyan-500/10 rounded-full blur-2xl"></div>
-
-                {/* Header Section */}
-                <div className="border-b border-blue-500/30 p-6 md:p-8">
-                  <div className="flex items-center gap-4 mb-4">
-                    <div
-                      className="w-16 h-16 rounded-xl flex items-center justify-center"
-                      style={{ background: `${selectedEvent.color}30` }}
-                    >
-                      <div
-                        className="w-10 h-10 rounded flex items-center justify-center text-xl"
-                        style={{ background: `${selectedEvent.color}50` }}
-                      >
-                        {selectedEvent.id}
-                      </div>
-                    </div>
-                    <h2 className="text-3xl md:text-4xl font-bold text-blue-300">
-                      {selectedEvent.title}
-                    </h2>
-                  </div>
-                  <p className="text-xl text-blue-100/90">
-                    {selectedEvent.description}
-                  </p>
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+              
+              <div className="flex items-center gap-4 mb-6">
+                <div 
+                  className="w-16 h-16 rounded-full flex items-center justify-center"
+                  style={{ backgroundColor: `${selectedEvent.color}30` }}
+                >
                 </div>
-
-                {/* Content Grid */}
-                <div className="grid md:grid-cols-2 gap-6 p-6 md:p-8">
-                  {/* Event Details */}
-                  <div className="space-y-6">
-                    <div className="bg-blue-900/30 p-6 rounded-xl border border-blue-500/20">
-                      <h3 className="text-xl font-semibold mb-4 text-blue-200">
-                        Event Details
-                      </h3>
-                      <ul className="space-y-3">
-                        <li className="flex items-center gap-3">
-                          <span className="w-8 h-8 flex items-center justify-center rounded-lg bg-blue-500/20">
-                            📅
-                          </span>
-                          <span>March 19-20, 2025</span>
-                        </li>
-                        <li className="flex items-center gap-3">
-                          <span className="w-8 h-8 flex items-center justify-center rounded-lg bg-blue-500/20">
-                            🏆
-                          </span>
-                          <span>Prizes worth ₹2,000</span>
-                        </li>
-                        <li className="flex items-center gap-3">
-                          <span className="w-8 h-8 flex items-center justify-center rounded-lg bg-blue-500/20">
-                            👥
-                          </span>
-                          <span>Team size: 2-4 members</span>
-                        </li>
-                        <li className="flex items-center gap-3">
-                          <span className="w-8 h-8 flex items-center justify-center rounded-lg bg-blue-500/20">
-                            ⏰
-                          </span>
-                          <span>Duration: 6 hours</span>
-                        </li>
-                      </ul>
-                    </div>
-
-                    {/* Rules Section */}
-                    <div className="bg-purple-900/30 p-6 rounded-xl border border-purple-500/20">
-                      <h3 className="text-xl font-semibold mb-4 text-purple-200">
-                        Rules
-                      </h3>
-                      <ul className="list-disc list-inside space-y-2 text-purple-100/90">
-                        <li>All team members must be registered</li>
-                        <li>Original work only</li>
-                        <li>Follow submission guidelines</li>
-                        <li>Judges decision is final</li>
-                      </ul>
-                    </div>
+                <div>
+                  <h2 className={`text-3xl font-bold text-blue-300 ${anta.className}`}>{selectedEvent.title}</h2>
+                  <div className={`inline-block mt-2 text-xs px-3 py-1 rounded-full bg-gradient-to-r ${getCategoryInfo(selectedEvent.category).color} text-white font-medium`}>
+                    {getCategoryInfo(selectedEvent.category).label}
                   </div>
-
-                  {/* Timeline & Requirements */}
-                  <div className="space-y-6">
-                    <div className="bg-cyan-900/30 p-6 rounded-xl border border-cyan-500/20">
-                      <h3 className="text-xl font-semibold mb-4 text-cyan-200">
-                        Timeline
-                      </h3>
-                      <div className="space-y-4">
-                        <div className="flex items-start gap-3">
-                          <div className="w-2 h-2 mt-2 rounded-full bg-cyan-400"></div>
-                          <div>
-                            <p className="font-semibold text-cyan-300">
-                              Registration Deadline
-                            </p>
-                            <p className="text-cyan-100/70">March 19, 2025</p>
-                          </div>
-                        </div>
-                        <div className="flex items-start gap-3">
-                          <div className="w-2 h-2 mt-2 rounded-full bg-cyan-400"></div>
-                          <div>
-                            <p className="font-semibold text-cyan-300">
-                              Event Start
-                            </p>
-                            <p className="text-cyan-100/70">
-                              March 19, 9:00 AM
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Requirements Section */}
-                    <div className="bg-blue-900/30 p-6 rounded-xl border border-blue-500/20">
-                      <h3 className="text-xl font-semibold mb-4 text-blue-200">
-                        Requirements
-                      </h3>
-                      <ul className="space-y-2 text-blue-100/90">
-                        <li>• Valid college ID</li>
-                        <li>• Laptop with required software</li>
-                        <li>• Preliminary project abstract</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Footer Actions */}
-                <div className="border-t border-blue-500/30 p-6 md:p-8 flex flex-wrap gap-4 justify-between items-center">
-                  <button
-                    className="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-full text-white font-bold transition-all shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40"
-                    onClick={() => {
-                      /* Registration logic */
-                    }}
-                  >
-                    Register Now
-                  </button>
-                  <button
-                    className="px-6 py-3 border border-blue-500/30 hover:border-blue-400 rounded-full text-blue-300 hover:text-blue-200 transition-all"
-                    onClick={() => setSelectedEvent(null)}
-                  >
-                    Close Details
-                  </button>
                 </div>
               </div>
+              
+              <div className="grid md:grid-cols-3 gap-6 mb-6">
+                <div className="bg-blue-900/30 rounded-lg p-4 border border-blue-500/20">
+                  <div className="text-blue-400 text-sm mb-1">Date</div>
+                  <div className="text-blue-200">{selectedEvent.date}</div>
+                </div>
+                <div className="bg-blue-900/30 rounded-lg p-4 border border-blue-500/20">
+                  <div className="text-blue-400 text-sm mb-1">Time</div>
+                  <div className="text-blue-200">{selectedEvent.time}</div>
+                </div>
+                <div className="bg-blue-900/30 rounded-lg p-4 border border-blue-500/20">
+                  <div className="text-blue-400 text-sm mb-1">Venue</div>
+                  <div className="text-blue-200">{selectedEvent.venue}</div>
+                </div>
+              </div>
+              
+              <div className="mb-8">
+                <h3 className="text-xl font-semibold text-blue-300 mb-3">Description</h3>
+                <p className="text-blue-100/80">{selectedEvent.description}</p>
+              </div>
+              
+              <div className="grid md:grid-cols-2 gap-6 mb-8">
+                <div>
+                  <h3 className="text-xl font-semibold text-blue-300 mb-3">Event Details</h3>
+                  <div className="space-y-4">
+                    <div>
+                      <div className="text-blue-400 text-sm">Prize Pool</div>
+                      <div className="text-blue-200 font-medium">{selectedEvent.prizes}</div>
+                    </div>
+                    <div>
+                      <div className="text-blue-400 text-sm">Team Size</div>
+                      <div className="text-blue-200 font-medium">{selectedEvent.teamSize}</div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div>
+                  <h3 className="text-xl font-semibold text-blue-300 mb-3">Staff Coordinators</h3>
+                  <div className="space-y-3">
+                    {selectedEvent.staffCoordinators.map((coordinator, idx) => (
+                      <div key={idx} className="flex flex-col">
+                        <div className="text-blue-200 font-medium">{coordinator.name}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <div>
+                  <h3 className="text-xl font-semibold text-blue-300 mt-5 mb-3">Student Coordinators</h3>
+                  <div className="space-y-2">
+                    {selectedEvent.coordinators.map((coordinator, idx) => (
+                      <div key={idx} className="flex flex-col">
+                        <div className="text-blue-200 font-medium">{coordinator.name}</div>
+                        <div className="text-blue-400 text-sm">{coordinator.phone}</div>
+                      </div>
+                    ))}
+                  </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mb-8">
+                <h3 className="text-xl font-semibold text-blue-300 mb-3">Rules & Guidelines</h3>
+                <ul className="list-disc list-inside space-y-2 text-blue-100/80">
+                  {selectedEvent.rules.map((rule, idx) => (
+                    <li key={idx}>{rule}</li>
+                  ))}
+                </ul>
+              </div>
+              
+              <div className="flex justify-end gap-4">
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-6 py-3 border border-blue-500/30 rounded-lg text-blue-300 hover:bg-blue-900/30"
+                >
+                  Close
+                </button>
+              </div>
             </motion.div>
-          ) : null}
-        </AnimatePresence>
+          </div>
+        )}
         <h1
           className={`text-4xl mt-1 text-center md:text-5xl font-extrabold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 ${anta.className} tracking-wider relative`}
         >
