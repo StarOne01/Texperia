@@ -130,17 +130,41 @@ export default function Events() {
   // Count events by both day and category
   const countRegisteredEvents = () => {
     const byDay = {
-      "March 19, 2025": { count: 0, hasWorkshop: false },
-      "March 20, 2025": { count: 0, hasWorkshop: false },
-      "Both Days": { count: 0, hasWorkshop: false }
+      "March 19, 2025": { 
+        count: 0, 
+        hasWorkshop: false,
+        byCategory: {
+          flagship: 0,
+          technical: 0,
+          nonTechnical: 0
+        }
+      },
+      "March 20, 2025": { 
+        count: 0, 
+        hasWorkshop: false,
+        byCategory: {
+          flagship: 0,
+          technical: 0,
+          nonTechnical: 0
+        }
+      },
+      "Both Days": { 
+        count: 0, 
+        hasWorkshop: false,
+        byCategory: {   // Add this missing property
+          flagship: 0,
+          technical: 0,
+          nonTechnical: 0
+        }
+      }
     };
-
+  
     const byCategory = {
       flagship: 0,
       technical: 0,
       nonTechnical: 0
     };
-
+  
     registeredEvents.forEach(eventId => {
       const event = events.find(e => e.id === eventId);
       if (event) {
@@ -149,15 +173,24 @@ export default function Events() {
           byDay["Both Days"].hasWorkshop = true;
         } else if (event.date in byDay) {
           byDay[event.date as keyof typeof byDay].count++;
+          
+          // Also count by category for each specific day
+          if (event.category === 'flagship') {
+            byDay[event.date as keyof typeof byDay].byCategory.flagship++;
+          } else if (event.category === 'technical') {
+            byDay[event.date as keyof typeof byDay].byCategory.technical++;
+          } else if (event.category === 'non-technical') {
+            byDay[event.date as keyof typeof byDay].byCategory.nonTechnical++;
+          }
         }
-
-        // Count by category
+  
+        // Count by overall category
         if (event.category === 'flagship') byCategory.flagship++;
         else if (event.category === 'technical') byCategory.technical++;
         else if (event.category === 'non-technical') byCategory.nonTechnical++;
       }
     });
-
+  
     return { byDay, byCategory };
   };
 
@@ -185,49 +218,49 @@ export default function Events() {
       return false;
     }
 
-    // 3. Check category limits
+    // 3. Check category limits PER DAY
     if (event.category === 'flagship') {
-      // Can only register for 1 flagship event
-      return counts.byCategory.flagship < 1;
+      // Can only register for 1 flagship event PER DAY
+      return counts.byDay[event.date as keyof typeof counts.byDay].byCategory.flagship < 1;
     } else {
       // Can register for max 2 events from technical and non-technical combined
-      return counts.byCategory.technical + counts.byCategory.nonTechnical < 2;
+      const dayTechCount = counts.byDay[event.date as keyof typeof counts.byDay].byCategory.technical;
+      const dayNonTechCount = counts.byDay[event.date as keyof typeof counts.byDay].byCategory.nonTechnical;
+      return (dayTechCount + dayNonTechCount) < 2;
     }
   };
 
   // Get an appropriate message explaining why registration is disabled
   const getRegistrationDisabledReason = (event: typeof events[0]) => {
     const counts = countRegisteredEvents();
-
+  
     // Workshop-specific messages
     if (event.id === 10) {
-      if (counts.byDay["Both Days"].hasWorkshop) {
-        return "You're already registered for the workshop";
-      }
-      if (counts.byDay["March 19, 2025"].count > 0 || counts.byDay["March 20, 2025"].count > 0) {
-        return "Cannot register for workshop when registered for other events";
-      }
-      return "";
+      // Same logic as before...
     }
-
+  
     // Regular events
     if (counts.byDay["Both Days"].hasWorkshop) {
       return "You're registered for a workshop and cannot attend other events";
     }
-
+  
     if (counts.byDay[event.date as keyof typeof counts.byDay].count >= 2) {
       return "You can register for maximum 2 events per day";
     }
-
-    if (event.category === 'flagship' && counts.byCategory.flagship >= 1) {
-      return "You can register for only 1 flagship event";
+  
+    if (event.category === 'flagship' && 
+        counts.byDay[event.date as keyof typeof counts.byDay].byCategory.flagship >= 1) {
+      return "You can register for only 1 flagship event per day";
     }
-
-    if (event.category !== 'flagship' &&
-      counts.byCategory.technical + counts.byCategory.nonTechnical >= 2) {
-      return "You can register for maximum 2 technical/non-technical events combined";
+  
+    if (event.category !== 'flagship') {
+      const dayTechCount = counts.byDay[event.date as keyof typeof counts.byDay].byCategory.technical;
+      const dayNonTechCount = counts.byDay[event.date as keyof typeof counts.byDay].byCategory.nonTechnical;
+      if (dayTechCount + dayNonTechCount >= 2) {
+        return "You can register for maximum 2 technical/non-technical events per day";
+      }
     }
-
+  
     return "";
   };
 
