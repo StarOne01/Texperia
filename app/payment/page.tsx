@@ -233,10 +233,10 @@ export default function PaymentPage() {
       
       // Check if the user has registered for events on both days
       const hasMarch19Events = registeredEventDetails.some(
-        event => event.id !== 10 && event.date === "March 19, 2025"
+        event => event.id !== 10 || event.date === "March 19, 2025"
       );
       const hasMarch20Events = registeredEventDetails.some(
-        event => event.id !== 10 && event.date === "March 20, 2025"
+        event => event.id !== 12 && event.date === "March 20, 2025"
       );
       
       // If planning to attend both days

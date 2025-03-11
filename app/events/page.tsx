@@ -147,34 +147,36 @@ export default function Events() {
           technical: 0,
           nonTechnical: 0
         }
-      },
-      "Both Days": { 
-        count: 0, 
-        hasWorkshop: false,
-        byCategory: {   // Add this missing property
-          flagship: 0,
-          technical: 0,
-          nonTechnical: 0
-        }
       }
+      // "Both Days" entry removed
     };
-  
+    
     const byCategory = {
       flagship: 0,
       technical: 0,
       nonTechnical: 0
     };
-  
+    
     registeredEvents.forEach(eventId => {
       const event = events.find(e => e.id === eventId);
       if (event) {
-        // Count by day
-        if (event.id === 10) { // Workshop ID
-          byDay["Both Days"].hasWorkshop = true;
-        } else if (event.date in byDay) {
-          byDay[event.date as keyof typeof byDay].count++;
+        // Update workshop counting logic
+        // Workshop IDs are now 10 and 12
+        if (event.id === 10) {
+          // Mark March 19 as having workshop
+          byDay["March 19, 2025"].hasWorkshop = true;
+        } else if (event.id === 12) {
+          // Mark March 20 as having workshop
+          byDay["March 20, 2025"].hasWorkshop = true;
+        }
+        
+        if (event.date in byDay) {
+          // Only increment count if not a workshop (workshops are special)
+          if (event.id !== 10 && event.id !== 12) {
+            byDay[event.date as keyof typeof byDay].count++;
+          }
           
-          // Also count by category for each specific day
+          // Count by category for each specific day
           if (event.category === 'flagship') {
             byDay[event.date as keyof typeof byDay].byCategory.flagship++;
           } else if (event.category === 'technical') {
@@ -183,14 +185,14 @@ export default function Events() {
             byDay[event.date as keyof typeof byDay].byCategory.nonTechnical++;
           }
         }
-  
+
         // Count by overall category
         if (event.category === 'flagship') byCategory.flagship++;
         else if (event.category === 'technical') byCategory.technical++;
         else if (event.category === 'non-technical') byCategory.nonTechnical++;
       }
     });
-  
+    
     return { byDay, byCategory };
   };
 
@@ -198,34 +200,35 @@ export default function Events() {
   const canRegisterForEvent = (event: typeof events[0]) => {
     const counts = countRegisteredEvents();
 
-    // Workshop-specific rules - ID 10 is workshop
-    if (event.id === 10) {
-      // Can't register for workshop if already registered for any events on either day
-      return counts.byDay["March 19, 2025"].count === 0 &&
-        counts.byDay["March 20, 2025"].count === 0 &&
-        !counts.byDay["Both Days"].hasWorkshop;
+    // Workshop-specific rules - for either workshop day
+    if (event.id === 10 || event.id === 12) {
+      const day = event.date as keyof typeof counts.byDay;
+      
+      // Can't register for workshop if already registered for events on that day
+      return counts.byDay[day].count === 0 && !counts.byDay[day].hasWorkshop;
     }
 
     // ===== Check for regular events =====
+    const day = event.date as keyof typeof counts.byDay;
 
-    // 1. Check workshop conflict - can't register for events if registered for workshop
-    if (counts.byDay["Both Days"].hasWorkshop) {
+    // 1. Check workshop conflict - can't register for events if registered for workshop on that day
+    if (counts.byDay[day].hasWorkshop) {
       return false;
     }
 
     // 2. Check day limit - maximum 2 events per day
-    if (counts.byDay[event.date as keyof typeof counts.byDay].count >= 2) {
+    if (counts.byDay[day].count >= 2) {
       return false;
     }
 
     // 3. Check category limits PER DAY
     if (event.category === 'flagship') {
       // Can only register for 1 flagship event PER DAY
-      return counts.byDay[event.date as keyof typeof counts.byDay].byCategory.flagship < 1;
+      return counts.byDay[day].byCategory.flagship < 1;
     } else {
       // Can register for max 2 events from technical and non-technical combined
-      const dayTechCount = counts.byDay[event.date as keyof typeof counts.byDay].byCategory.technical;
-      const dayNonTechCount = counts.byDay[event.date as keyof typeof counts.byDay].byCategory.nonTechnical;
+      const dayTechCount = counts.byDay[day].byCategory.technical;
+      const dayNonTechCount = counts.byDay[day].byCategory.nonTechnical;
       return (dayTechCount + dayNonTechCount) < 2;
     }
   };
@@ -233,34 +236,45 @@ export default function Events() {
   // Get an appropriate message explaining why registration is disabled
   const getRegistrationDisabledReason = (event: typeof events[0]) => {
     const counts = countRegisteredEvents();
-  
-    // Workshop-specific messages
-    if (event.id === 10) {
-      // Same logic as before...
+
+    // Workshop-specific messages for either day
+    if (event.id === 10 || event.id === 12) {
+      const day = event.date as keyof typeof counts.byDay;
+      
+      if (counts.byDay[day].hasWorkshop) {
+        return "You're already registered for a workshop on this day";
+      }
+      
+      if (counts.byDay[day].count > 0) {
+        return "You have registered events on this day and cannot register for workshop";
+      }
+      
+      return "";
     }
-  
+
     // Regular events
-    if (counts.byDay["Both Days"].hasWorkshop) {
-      return "You're registered for a workshop and cannot attend other events";
+    const day = event.date as keyof typeof counts.byDay;
+    
+    if (counts.byDay[day].hasWorkshop) {
+      return "You're registered for a workshop on this day and cannot attend other events";
     }
-  
-    if (counts.byDay[event.date as keyof typeof counts.byDay].count >= 2) {
+
+    if (counts.byDay[day].count >= 2) {
       return "You can register for maximum 2 events per day";
     }
-  
-    if (event.category === 'flagship' && 
-        counts.byDay[event.date as keyof typeof counts.byDay].byCategory.flagship >= 1) {
+
+    if (event.category === 'flagship' && counts.byDay[day].byCategory.flagship >= 1) {
       return "You can register for only 1 flagship event per day";
     }
-  
+
     if (event.category !== 'flagship') {
-      const dayTechCount = counts.byDay[event.date as keyof typeof counts.byDay].byCategory.technical;
-      const dayNonTechCount = counts.byDay[event.date as keyof typeof counts.byDay].byCategory.nonTechnical;
+      const dayTechCount = counts.byDay[day].byCategory.technical;
+      const dayNonTechCount = counts.byDay[day].byCategory.nonTechnical;
       if (dayTechCount + dayNonTechCount >= 2) {
         return "You can register for maximum 2 technical/non-technical events per day";
       }
     }
-  
+
     return "";
   };
 
@@ -509,16 +523,7 @@ export default function Events() {
             >
               March 20
             </button>
-            <button
-              onClick={() => setActiveDayTab('Both Days')}
-              className={`px-4 py-2 rounded-full transition-colors ${
-                activeDayTab === 'Both Days'
-                  ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white'
-                  : 'bg-blue-900/30 text-blue-300 hover:bg-blue-800/40'
-              }`}
-            >
-              Workshop (Both Days)
-            </button>
+            {/* Both Days button removed */}
           </div>
         </div>
 
@@ -590,44 +595,49 @@ export default function Events() {
 
             <h3 className="text-lg font-semibold text-blue-300 mb-3">Your Registration Status</h3>
 
-            {/* ADD THIS: Day-based registration status */}
+            {/* UPDATE THIS: Day-based registration status */}
             <h4 className="text-md font-medium text-blue-300 mb-2">Events by Day</h4>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div className="bg-blue-900/30 rounded-lg p-3">
                 <div className="flex justify-between items-center">
                   <span className="text-blue-300">March 19, 2025</span>
-                  <span className={`px-2 py-1 rounded-full text-xs ${countRegisteredEvents().byDay["March 19, 2025"].count === 0
-                      ? 'bg-blue-500/20 text-blue-300'
-                      : countRegisteredEvents().byDay["March 19, 2025"].count === 2
-                        ? 'bg-green-500/20 text-green-300'
-                        : 'bg-yellow-500/20 text-yellow-300'
+                  <div className="flex items-center gap-1">
+                    <span className={`px-2 py-1 rounded-full text-xs ${
+                      countRegisteredEvents().byDay["March 19, 2025"].count === 0 
+                        ? 'bg-blue-500/20 text-blue-300'
+                        : countRegisteredEvents().byDay["March 19, 2025"].count === 2
+                          ? 'bg-green-500/20 text-green-300'
+                          : 'bg-yellow-500/20 text-yellow-300'
                     }`}>
-                    {countRegisteredEvents().byDay["March 19, 2025"].count}/2 Events
-                  </span>
+                      {countRegisteredEvents().byDay["March 19, 2025"].count}/2 Events
+                    </span>
+                    {countRegisteredEvents().byDay["March 19, 2025"].hasWorkshop && (
+                      <span className="px-2 py-1 rounded-full text-xs bg-purple-500/20 text-purple-300">
+                        Workshop
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
               <div className="bg-blue-900/30 rounded-lg p-3">
                 <div className="flex justify-between items-center">
                   <span className="text-blue-300">March 20, 2025</span>
-                  <span className={`px-2 py-1 rounded-full text-xs ${countRegisteredEvents().byDay["March 20, 2025"].count === 0
-                      ? 'bg-blue-500/20 text-blue-300'
-                      : countRegisteredEvents().byDay["March 20, 2025"].count === 2
-                        ? 'bg-green-500/20 text-green-300'
-                        : 'bg-yellow-500/20 text-yellow-300'
+                  <div className="flex items-center gap-1">
+                    <span className={`px-2 py-1 rounded-full text-xs ${
+                      countRegisteredEvents().byDay["March 20, 2025"].count === 0 
+                        ? 'bg-blue-500/20 text-blue-300'
+                        : countRegisteredEvents().byDay["March 20, 2025"].count === 2
+                          ? 'bg-green-500/20 text-green-300'
+                          : 'bg-yellow-500/20 text-yellow-300'
                     }`}>
-                    {countRegisteredEvents().byDay["March 20, 2025"].count}/2 Events
-                  </span>
-                </div>
-              </div>
-              <div className="bg-blue-900/30 rounded-lg p-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-blue-300">Workshop</span>
-                  <span className={`px-2 py-1 rounded-full text-xs ${!countRegisteredEvents().byDay["Both Days"].hasWorkshop
-                      ? 'bg-blue-500/20 text-blue-300'
-                      : 'bg-green-500/20 text-green-300'
-                    }`}>
-                    {countRegisteredEvents().byDay["Both Days"].hasWorkshop ? "Registered" : "Not Registered"}
-                  </span>
+                      {countRegisteredEvents().byDay["March 20, 2025"].count}/2 Events
+                    </span>
+                    {countRegisteredEvents().byDay["March 20, 2025"].hasWorkshop && (
+                      <span className="px-2 py-1 rounded-full text-xs bg-purple-500/20 text-purple-300">
+                        Workshop
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -672,8 +682,9 @@ export default function Events() {
                 <ul className="list-disc list-inside space-y-1">
                   <li>You can register for maximum 2 events per day</li>
                   <li>For each day, you can register for either: 1 flagship + 1 technical/non-technical event, OR 2 technical events, OR 2 non-technical events, OR 1 technical + 1 non-technical event</li>
-                  <li>If you register for the workshop, you cannot register for any other events</li>
-                  <li>Registration fee: ₹300 per day or ₹300 for workshop (₹600 if attending events on both days)</li>
+                  <li>Alternatively, you can register for a workshop on either day (instead of regular events)</li>
+                  <li>If you register for a workshop on a particular day, you cannot register for any other events on that day</li>
+                  <li>Registration fee: ₹300 per day (events or workshop)</li>
                   <li>Lunch is provided for event participants but not for workshop attendees</li>
                 </ul>
               </div>

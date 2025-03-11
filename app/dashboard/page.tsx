@@ -1103,7 +1103,7 @@ export default function Dashboard() {
                       Create a team to participate in team events
                     </p>
                   </div>
-                )})
+                )}
 
                 {isCreatingTeam ? (
                   <div className="bg-blue-900/30 border border-blue-500/30 rounded-xl p-6">
@@ -1127,9 +1127,9 @@ export default function Dashboard() {
                           onChange={(e) => setNewTeamEventId(Number(e.target.value))}
                           className="w-full bg-blue-900/20 border border-blue-500/30 rounded-lg px-3 py-2 text-blue-200 focus:outline-none focus:border-blue-400"
                         >
-                          <option value="">Select an event</option>
+                          <option className="bg-black" value="">Select an event</option>
                           {events.filter(event => event.isTeamEvent).map(event => (
-                            <option key={event.id} value={event.id}>
+                            <option className="bg-black" key={event.id} value={event.id}>
                               {event.title}
                             </option>
                           ))}

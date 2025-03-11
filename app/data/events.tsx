@@ -270,28 +270,30 @@ const events = [
         { name: "Ms.Sasmidha. C", phone: "63801 09324" }
       ]
     },
+
+    // Workshop Day 1 - Embedded Systems
     {
       id: 10,
-      title: "Workshop",
-      description: "Hands-on sessions on cutting-edge technologies and engineering practices. Learn practical skills from industry experts. Two-day program covering Embedded Systems (Day 1) and PCB Design (Day 2).",
+      title: "Workshop - Embedded Systems",
+      description: "Hands-on sessions on embedded systems technology. Learn practical skills from industry experts covering microcontrollers, sensors, and IoT applications.",
       icon: "/icons/workshop.svg",
       color: "#44337a",
       isTeamEvent: false,
-      date: "Both Days",
+      date: "March 19, 2025",
       time: "9.00 AM - 4.30 PM",
       venue: "Will be announced on the day of event",
       prizes: "Certificate of Completion",
       teamSize: "Individual Registration",
       category: "technical",
       rules: [
-        "Separate registration required for each workshop",
-        "On-spot registration can be done",
-        "Two days of workshop consists of two topics: Embedded Systems on Day 1 and PCB Design on Day 2",
-        "You can choose to attend either one day (₹300) or both days (₹600)",
+        "Registration required in advance",
+        "On-spot registration available subject to seat availability",
         "Materials will be provided",
-        "Hands-on training for both workshops",
-        "Limited seats available",
-        "Prior knowledge requirements vary by workshop"
+        "Hands-on training with practical exercises",
+        "Limited seats available (50 participants)",
+        "Basic knowledge of electronics recommended",
+        "Registration fee: ₹300",
+        "No lunch provided - participants must make their own arrangements"
       ],
       staffCoordinators: [
         { name: "Dr.D.Revathi AP/EEE"}
@@ -301,8 +303,42 @@ const events = [
         { name: "Ms.Monika sree.D", phone: "87540 17645" }
       ]
     },
+
+    // Workshop Day 2 - PCB Design
     {
-      id: 11,
+      id: 11,  // Using ID 12 since 11 is already used
+      title: "Workshop - PCB Design",
+      description: "Master the art of PCB design in this intensive workshop. Learn industry-standard design techniques, component selection, layout optimization, and manufacturing considerations.",
+      icon: "/icons/workshop.svg",
+      color: "#44337a",
+      isTeamEvent: false,
+      date: "March 20, 2025",
+      time: "9.00 AM - 4.30 PM",
+      venue: "Will be announced on the day of event",
+      prizes: "Certificate of Completion",
+      teamSize: "Individual Registration",
+      category: "technical",
+      rules: [
+        "Registration required in advance",
+        "On-spot registration available subject to seat availability",
+        "Materials will be provided",
+        "Hands-on training with industry-standard software",
+        "Limited seats available (50 participants)",
+        "Basic knowledge of electronics recommended",
+        "Registration fee: ₹300",
+        "No lunch provided - participants must make their own arrangements"
+      ],
+      staffCoordinators: [
+        { name: "Dr.D.Revathi AP/EEE"}
+      ],
+      coordinators: [
+        { name: "Ms.Monika.M", phone: "75399 94722" },
+        { name: "Ms.Monika sree.D", phone: "87540 17645" }
+      ]
+    },
+
+    {
+      id: 12,
       title: "Electrical Safety Mime",
       description: "Creative performances highlighting the importance of electrical safety. Communicate important safety concepts through the art of mime and non-verbal expression.",
       icon: "/icons/safety.svg",
