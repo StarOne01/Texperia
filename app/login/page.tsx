@@ -11,6 +11,9 @@ const anta = Anta({
 export default function Login() {
   return (
     <div className="min-h-screen bg-black text-white py-20 px-4">
+              <Link href="/#events" className="inline-block mb-10 text-blue-300 hover:text-blue-200">
+          ← Back to home
+        </Link>
       <div className="max-w-6xl mx-auto">
         <h1 className={`text-4xl text-center md:text-5xl font-extrabold mb-12 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 ${anta.className} tracking-wider`}>
           Login to Texperia

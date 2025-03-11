@@ -189,6 +189,7 @@ export default function Auth({ initialMode = 'login' }: AuthProps) {
         {!isLogin && (
           <>
             <div>
+              
               <label className="block text-blue-300 mb-1">
                 Full Name <span className="text-red-400">*</span>
               </label>
@@ -289,6 +290,8 @@ export default function Auth({ initialMode = 'login' }: AuthProps) {
               </select>
               {fieldError('yearOfStudy')}
             </div>
+            <p className='text-red-300'>Don't forget to check your spam too!</p>
+
           </>
         )}
         

@@ -787,8 +787,9 @@ export default function Home() {
             </motion.div>
           </div>
         )}
+        <div className="relative z-10 py-20 bg-gradient-to-b from-blue-900/10 to-transparent">
         <h1
-          className={`text-4xl mt-1 text-center md:text-5xl font-extrabold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 ${anta.className} tracking-wider relative`}
+          className={`text-4xl mt-1 text-center mb-7 md:text-5xl font-extrabold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 ${anta.className} tracking-wider relative`}
         >
           Events
         </h1>
@@ -851,6 +852,7 @@ export default function Home() {
             </div>
           ))}
         </div>
+      </div>
 
         {/* About Section - Add after the Events section */}
         <section id="about" className="relative z-10 px-6 py-20 bg-gradient-to-b from-blue-900/10 to-transparent">
