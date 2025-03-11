@@ -1127,7 +1127,7 @@ export default function Dashboard() {
                           onChange={(e) => setNewTeamEventId(Number(e.target.value))}
                           className="w-full bg-blue-900/20 border border-blue-500/30 rounded-lg px-3 py-2 text-blue-200 focus:outline-none focus:border-blue-400"
                         >
-                          <option className="bg-black" value="">Select an event</option>
+                          <option className="bg-black" value="all">All</option>
                           {events.filter(event => event.isTeamEvent).map(event => (
                             <option className="bg-black" key={event.id} value={event.id}>
                               {event.title}
