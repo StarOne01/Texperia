@@ -624,7 +624,55 @@ export default function Home() {
             </button>
           </div>
         </header>
-
+        <section id="venue" className="relative z-10 px-6 bg-gradient-to-b from-transparent to-blue-900/10">
+          <div className="max-w-4xl mx-auto">
+            <h1
+              className={`text-4xl text-center md:text-5xl font-extrabold mb-10 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 ${anta.className} tracking-wider relative`}
+            >
+              Where?
+            </h1>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7 }}
+              className="relative"
+            >
+              <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl blur-xl opacity-30"></div>
+              <div className="relative bg-gradient-to-br from-blue-900/50 to-purple-900/50 rounded-xl p-6 border border-blue-500/30 backdrop-blur-md">
+                <p className="text-lg text-blue-100 mb-6 leading-relaxed">
+                  Texperia 2025 is happening at SNS College of Technology, Coimbatore, hosted by the Department of Electrical and Electronics Engineering (EEE). This exciting technical event will bring together engineering students and professionals to explore, innovate, and showcase skills in electrical and electronics engineering.
+                </p>
+                
+                <div className="grid md:grid-cols-2 gap-6 mt-8">
+                  <div className="bg-blue-900/30 rounded-lg p-4 border border-blue-500/20">
+                    <h3 className="text-xl font-semibold text-blue-300 mb-3">Venue</h3>
+                    <p className="text-blue-100">
+                      SNS College of Technology<br />
+                      Coimbatore, Tamil Nadu
+                    </p>
+                  </div>
+                  
+                  <div className="bg-blue-900/30 rounded-lg p-4 border border-blue-500/20">
+                    <h3 className="text-xl font-semibold text-blue-300 mb-3">Organized by</h3>
+                    <p className="text-blue-100">
+                      Department of Electrical and<br />
+                      Electronics Engineering (EEE)
+                    </p>
+                  </div>
+                </div>
+                
+                <p className="text-center text-blue-200 mt-8 font-medium">
+                  Join us at Texperia 2025 for an immersive experience in learning, competition, and networking!
+                </p>
+              </div>
+              
+              {/* Interactive animation element */}
+              <div className="absolute bottom-2 right-2 w-2 h-2 rounded-full bg-blue-400/50 animate-ping"></div>
+              <div className="absolute top-2 left-2 w-2 h-2 rounded-full bg-purple-400/50 animate-ping" style={{ animationDelay: "0.5s" }}></div>
+            </motion.div>
+          </div>
+        </section>
         {/* Event Details Modal */}
         {isModalOpen && selectedEvent && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">

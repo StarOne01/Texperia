@@ -32,7 +32,7 @@ const events = [
     },
     {
       id: 2,
-      title: "War of Witz(Technical Quiz)",
+      title: "War of Witz (Technical Quiz)",
       description: "Test your technical knowledge in this fast-paced, challenging quiz competition. Cover topics from electronics, programming, mathematics, and general engineering principles.",
       icon: "/icons/quiz.svg",
       color: "#38b2ac",
@@ -65,7 +65,7 @@ const events = [
     },
     {
       id: 3,
-      title: "Solvelt hack(Hackathon)",
+      title: "Solvelt hack (Hackathon)",
       description: "24 hours of coding, innovation, and problem-solving. Build solutions that matter in this intensive development marathon focused on real-world challenges.",
       icon: "/icons/code.svg",
       color: "#319795",
@@ -97,7 +97,7 @@ const events = [
     },
     {
       id: 4,
-      title: "Plan Pro(Project Presentation)",
+      title: "Plan Pro (Project Presentation)",
       description: "Showcase your engineering projects and get feedback from industry experts. Present working prototypes or detailed models of your innovative engineering solutions.",
       icon: "/icons/project.svg",
       color: "#2c7a7b",
@@ -129,7 +129,7 @@ const events = [
     },
     {
       id: 5,
-      title: "Blink and Build(Rapid Prototype Challenge)",
+      title: "Blink and Build (Rapid Prototype Challenge)",
       description: "Design, build and demonstrate a working prototype within a limited timeframe. Test your quick thinking and hands-on skills in this exciting time-bound challenge.",
       icon: "/public/prototype.svg",
       color: "#285e61",
@@ -158,12 +158,12 @@ const events = [
     },
     {
       id: 6,
-      title: "Poster Perspective(Poster Presentation)",
+      title: "Poster Perspective (Poster Presentation)",
       description: "Visualize your ideas through creative posters and win exciting prizes. Present complex technical concepts through effective visual communication.",
       icon: "/icons/poster.svg",
       color: "#234e52",
       date: "March 19, 2025",
-      time: "9:00 AM - 1:00 PM",
+      time: "1:00 PM - 4:00 PM",
       isTeamEvent: true,
       venue: "Will be announced on the day of event",
       prizes: "Attractive prizes will be given",
@@ -189,7 +189,7 @@ const events = [
     },
     {
       id: 7,
-      title: "Mission Debuggable(Circuit Debugging)",
+      title: "Mission Debuggable (Circuit Debugging)",
       description: "Find and fix errors in complex electrical circuits against the clock. Test your troubleshooting skills and theoretical knowledge in this practical challenge.",
       icon: "/icons/circuit.svg",
       color: "#805ad5",
@@ -217,7 +217,7 @@ const events = [
     },
     {
       id: 8,
-      title: "Sketch Your Creativity(Drawing)",
+      title: "Sketch Your Creativity (Drawing)",
       description: "Express your technical concepts through artistic sketches and diagrams. Blend art with engineering in this unique competition focusing on technical illustration.",
       icon: "/icons/sketch.svg",
       color: "#6b46c1",
