@@ -227,8 +227,24 @@ export default function PaymentPage() {
     const hasWorkshop = registeredEventDetails.some(event => event.id === 10);
     
     if (hasWorkshop) {
-      // Workshop costs 300 regardless of other events
-      return 300;
+      // Workshop pricing: 
+      // If user has events on both March 19 and March 20, charge 600
+      // Otherwise charge 300 for single day workshop
+      
+      // Check if the user has registered for events on both days
+      const hasMarch19Events = registeredEventDetails.some(
+        event => event.id !== 10 && event.date === "March 19, 2025"
+      );
+      const hasMarch20Events = registeredEventDetails.some(
+        event => event.id !== 10 && event.date === "March 20, 2025"
+      );
+      
+      // If planning to attend both days
+      if (hasMarch19Events && hasMarch20Events) {
+        return 600; // Full price for both days
+      }
+      
+      return 300; // Single day price
     }
     
     // For regular events, check which days have events

@@ -273,7 +273,7 @@ const events = [
     {
       id: 10,
       title: "Workshop",
-      description: "Hands-on sessions on cutting-edge technologies and engineering practices. Learn practical skills from industry experts in specialized areas of technology.",
+      description: "Hands-on sessions on cutting-edge technologies and engineering practices. Learn practical skills from industry experts. Two-day program covering Embedded Systems (Day 1) and PCB Design (Day 2).",
       icon: "/icons/workshop.svg",
       color: "#44337a",
       isTeamEvent: false,
@@ -286,10 +286,10 @@ const events = [
       rules: [
         "Separate registration required for each workshop",
         "On-spot registration can be done",
-        "Two days of workshop consists of two topics Embedded system and technology and PCB designing on Day 1 and Day 2 respectively",
-        "The workshop title can be selected by the individual to confirm the slot for Day 1 or Day 2",
+        "Two days of workshop consists of two topics: Embedded Systems on Day 1 and PCB Design on Day 2",
+        "You can choose to attend either one day (₹300) or both days (₹600)",
         "Materials will be provided",
-        "Hands on training for both workshops",
+        "Hands-on training for both workshops",
         "Limited seats available",
         "Prior knowledge requirements vary by workshop"
       ],

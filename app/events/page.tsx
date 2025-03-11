@@ -28,6 +28,7 @@ export default function Events() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('all');
+  const [activeDayTab, setActiveDayTab] = useState('all');
   const router = useRouter();
 
   useEffect(() => {
@@ -244,8 +245,13 @@ export default function Events() {
     const matchesCategory =
       activeTab === 'all' ||
       event.category === activeTab;
+      
+    // Day filter
+    const matchesDay = 
+      activeDayTab === 'all' || 
+      event.date === activeDayTab;
 
-    return matchesSearch && matchesCategory;
+    return matchesSearch && matchesCategory && matchesDay;
   });
 
   const getCategoryInfo = (category: string) => {
@@ -434,6 +440,55 @@ export default function Events() {
           </div>
         </div>
 
+        {/* Add this after the existing category tabs */}
+
+        {/* Add a new state for day tab */}
+        <div className="mb-8 mt-6">
+          <h3 className="text-lg font-medium text-blue-300 mb-3 text-center">Filter by Day</h3>
+          <div className="flex flex-wrap justify-center gap-2 md:gap-4">
+            <button
+              onClick={() => setActiveDayTab('all')}
+              className={`px-4 py-2 rounded-full transition-colors ${
+                activeDayTab === 'all'
+                  ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white'
+                  : 'bg-blue-900/30 text-blue-300 hover:bg-blue-800/40'
+              }`}
+            >
+              All Days
+            </button>
+            <button
+              onClick={() => setActiveDayTab('March 19, 2025')}
+              className={`px-4 py-2 rounded-full transition-colors ${
+                activeDayTab === 'March 19, 2025'
+                  ? 'bg-gradient-to-r from-pink-600 to-orange-600 text-white'
+                  : 'bg-blue-900/30 text-blue-300 hover:bg-blue-800/40'
+              }`}
+            >
+              March 19
+            </button>
+            <button
+              onClick={() => setActiveDayTab('March 20, 2025')}
+              className={`px-4 py-2 rounded-full transition-colors ${
+                activeDayTab === 'March 20, 2025'
+                  ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white'
+                  : 'bg-blue-900/30 text-blue-300 hover:bg-blue-800/40'
+              }`}
+            >
+              March 20
+            </button>
+            <button
+              onClick={() => setActiveDayTab('Both Days')}
+              className={`px-4 py-2 rounded-full transition-colors ${
+                activeDayTab === 'Both Days'
+                  ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white'
+                  : 'bg-blue-900/30 text-blue-300 hover:bg-blue-800/40'
+              }`}
+            >
+              Workshop (Both Days)
+            </button>
+          </div>
+        </div>
+
         {/* Search */}
         <div className="mb-10">
           <div className="flex flex-col md:flex-row gap-4">
@@ -615,13 +670,13 @@ export default function Events() {
                     className="w-12 h-12 rounded-full flex items-center justify-center"
                     style={{ backgroundColor: `${event.color}30` }}
                   >
-                    <Image
-                      src={event.icon}
-                      alt={event.title}
-                      width={44}
-                      height={44}
-                      className="text-white"
-                    />
+                    {/* Replace the Image component with this: */}
+                    <div
+                      className="w-10 h-10 rounded flex items-center justify-center text-xl font-bold"
+                      style={{ background: `${event.color}50`, color: `${event.color}` }}
+                    >
+                      {event.id}
+                    </div>
                   </div>
                   <div className="flex flex-col items-end gap-2">
                     {/* Category badge */}
@@ -714,12 +769,13 @@ export default function Events() {
                   className="w-16 h-16 rounded-full flex items-center justify-center"
                   style={{ backgroundColor: `${selectedEvent.color}30` }}
                 >
-                  <Image
-                    src={selectedEvent.icon}
-                    alt={selectedEvent.title}
-                    width={32}
-                    height={32}
-                  />
+                  {/* Replace the Image component with this: */}
+                  <div
+                    className="w-12 h-12 rounded flex items-center justify-center text-2xl font-bold"
+                    style={{ background: `${selectedEvent.color}50`, color: `${selectedEvent.color}` }}
+                  >
+                    {selectedEvent.id}
+                  </div>
                 </div>
                 <div>
                   <h2 className={`text-3xl font-bold text-blue-300 ${anta.className}`}>{selectedEvent.title}</h2>
