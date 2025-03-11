@@ -130,8 +130,8 @@ export default function Events() {
   // Count events by both day and category
   const countRegisteredEvents = () => {
     const byDay = {
-      "March 19, 2025": { 
-        count: 0, 
+      "March 19, 2025": {
+        count: 0,
         hasWorkshop: false,
         byCategory: {
           flagship: 0,
@@ -139,8 +139,8 @@ export default function Events() {
           nonTechnical: 0
         }
       },
-      "March 20, 2025": { 
-        count: 0, 
+      "March 20, 2025": {
+        count: 0,
         hasWorkshop: false,
         byCategory: {
           flagship: 0,
@@ -150,13 +150,13 @@ export default function Events() {
       }
       // "Both Days" entry removed
     };
-    
+
     const byCategory = {
       flagship: 0,
       technical: 0,
       nonTechnical: 0
     };
-    
+
     registeredEvents.forEach(eventId => {
       const event = events.find(e => e.id === eventId);
       if (event) {
@@ -169,13 +169,13 @@ export default function Events() {
           // Mark March 20 as having workshop
           byDay["March 20, 2025"].hasWorkshop = true;
         }
-        
+
         if (event.date in byDay) {
           // Only increment count if not a workshop (workshops are special)
           if (event.id !== 10 && event.id !== 12) {
             byDay[event.date as keyof typeof byDay].count++;
           }
-          
+
           // Count by category for each specific day
           if (event.category === 'flagship') {
             byDay[event.date as keyof typeof byDay].byCategory.flagship++;
@@ -192,7 +192,7 @@ export default function Events() {
         else if (event.category === 'non-technical') byCategory.nonTechnical++;
       }
     });
-    
+
     return { byDay, byCategory };
   };
 
@@ -203,7 +203,7 @@ export default function Events() {
     // Workshop-specific rules - for either workshop day
     if (event.id === 10 || event.id === 12) {
       const day = event.date as keyof typeof counts.byDay;
-      
+
       // Can't register for workshop if already registered for events on that day
       return counts.byDay[day].count === 0 && !counts.byDay[day].hasWorkshop;
     }
@@ -240,21 +240,21 @@ export default function Events() {
     // Workshop-specific messages for either day
     if (event.id === 10 || event.id === 12) {
       const day = event.date as keyof typeof counts.byDay;
-      
+
       if (counts.byDay[day].hasWorkshop) {
         return "You're already registered for a workshop on this day";
       }
-      
+
       if (counts.byDay[day].count > 0) {
         return "You have registered events on this day and cannot register for workshop";
       }
-      
+
       return "";
     }
 
     // Regular events
     const day = event.date as keyof typeof counts.byDay;
-    
+
     if (counts.byDay[day].hasWorkshop) {
       return "You're registered for a workshop on this day and cannot attend other events";
     }
@@ -292,10 +292,10 @@ export default function Events() {
     const matchesCategory =
       activeTab === 'all' ||
       event.category === activeTab;
-      
+
     // Day filter
-    const matchesDay = 
-      activeDayTab === 'all' || 
+    const matchesDay =
+      activeDayTab === 'all' ||
       event.date === activeDayTab;
 
     return matchesSearch && matchesCategory && matchesDay;
@@ -409,8 +409,8 @@ export default function Events() {
         {/* Mobile Menu */}
         <div
           className={`md:hidden absolute top-full left-0 w-full bg-black/90 backdrop-blur-md border-b border-blue-500/20 transition-all duration-300 ${mobileMenuOpen
-              ? "max-h-64 opacity-100"
-              : "max-h-0 opacity-0 overflow-hidden"
+            ? "max-h-64 opacity-100"
+            : "max-h-0 opacity-0 overflow-hidden"
             }`}
         >
           <div className="px-6 py-4 flex flex-col gap-4">
@@ -451,8 +451,8 @@ export default function Events() {
             <button
               onClick={() => setActiveTab('all')}
               className={`px-4 py-2 rounded-full transition-colors ${activeTab === 'all'
-                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white'
-                  : 'bg-blue-900/30 text-blue-300 hover:bg-blue-800/40'
+                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white'
+                : 'bg-blue-900/30 text-blue-300 hover:bg-blue-800/40'
                 }`}
             >
               All Events
@@ -460,8 +460,8 @@ export default function Events() {
             <button
               onClick={() => setActiveTab('flagship')}
               className={`px-4 py-2 rounded-full transition-colors ${activeTab === 'flagship'
-                  ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white'
-                  : 'bg-blue-900/30 text-blue-300 hover:bg-blue-800/40'
+                ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white'
+                : 'bg-blue-900/30 text-blue-300 hover:bg-blue-800/40'
                 }`}
             >
               Flagship Events
@@ -469,8 +469,8 @@ export default function Events() {
             <button
               onClick={() => setActiveTab('technical')}
               className={`px-4 py-2 rounded-full transition-colors ${activeTab === 'technical'
-                  ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white'
-                  : 'bg-blue-900/30 text-blue-300 hover:bg-blue-800/40'
+                ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white'
+                : 'bg-blue-900/30 text-blue-300 hover:bg-blue-800/40'
                 }`}
             >
               Technical Events
@@ -478,8 +478,8 @@ export default function Events() {
             <button
               onClick={() => setActiveTab('non-technical')}
               className={`px-4 py-2 rounded-full transition-colors ${activeTab === 'non-technical'
-                  ? 'bg-gradient-to-r from-green-600 to-teal-600 text-white'
-                  : 'bg-blue-900/30 text-blue-300 hover:bg-blue-800/40'
+                ? 'bg-gradient-to-r from-green-600 to-teal-600 text-white'
+                : 'bg-blue-900/30 text-blue-300 hover:bg-blue-800/40'
                 }`}
             >
               Non-Technical Events
@@ -495,31 +495,28 @@ export default function Events() {
           <div className="flex flex-wrap justify-center gap-2 md:gap-4">
             <button
               onClick={() => setActiveDayTab('all')}
-              className={`px-4 py-2 rounded-full transition-colors ${
-                activeDayTab === 'all'
+              className={`px-4 py-2 rounded-full transition-colors ${activeDayTab === 'all'
                   ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white'
                   : 'bg-blue-900/30 text-blue-300 hover:bg-blue-800/40'
-              }`}
+                }`}
             >
               All Days
             </button>
             <button
               onClick={() => setActiveDayTab('March 19, 2025')}
-              className={`px-4 py-2 rounded-full transition-colors ${
-                activeDayTab === 'March 19, 2025'
+              className={`px-4 py-2 rounded-full transition-colors ${activeDayTab === 'March 19, 2025'
                   ? 'bg-gradient-to-r from-pink-600 to-orange-600 text-white'
                   : 'bg-blue-900/30 text-blue-300 hover:bg-blue-800/40'
-              }`}
+                }`}
             >
               March 19
             </button>
             <button
               onClick={() => setActiveDayTab('March 20, 2025')}
-              className={`px-4 py-2 rounded-full transition-colors ${
-                activeDayTab === 'March 20, 2025'
+              className={`px-4 py-2 rounded-full transition-colors ${activeDayTab === 'March 20, 2025'
                   ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white'
                   : 'bg-blue-900/30 text-blue-300 hover:bg-blue-800/40'
-              }`}
+                }`}
             >
               March 20
             </button>
@@ -602,13 +599,12 @@ export default function Events() {
                 <div className="flex justify-between items-center">
                   <span className="text-blue-300">March 19, 2025</span>
                   <div className="flex items-center gap-1">
-                    <span className={`px-2 py-1 rounded-full text-xs ${
-                      countRegisteredEvents().byDay["March 19, 2025"].count === 0 
+                    <span className={`px-2 py-1 rounded-full text-xs ${countRegisteredEvents().byDay["March 19, 2025"].count === 0
                         ? 'bg-blue-500/20 text-blue-300'
                         : countRegisteredEvents().byDay["March 19, 2025"].count === 2
                           ? 'bg-green-500/20 text-green-300'
                           : 'bg-yellow-500/20 text-yellow-300'
-                    }`}>
+                      }`}>
                       {countRegisteredEvents().byDay["March 19, 2025"].count}/2 Events
                     </span>
                     {countRegisteredEvents().byDay["March 19, 2025"].hasWorkshop && (
@@ -623,13 +619,12 @@ export default function Events() {
                 <div className="flex justify-between items-center">
                   <span className="text-blue-300">March 20, 2025</span>
                   <div className="flex items-center gap-1">
-                    <span className={`px-2 py-1 rounded-full text-xs ${
-                      countRegisteredEvents().byDay["March 20, 2025"].count === 0 
+                    <span className={`px-2 py-1 rounded-full text-xs ${countRegisteredEvents().byDay["March 20, 2025"].count === 0
                         ? 'bg-blue-500/20 text-blue-300'
                         : countRegisteredEvents().byDay["March 20, 2025"].count === 2
                           ? 'bg-green-500/20 text-green-300'
                           : 'bg-yellow-500/20 text-yellow-300'
-                    }`}>
+                      }`}>
                       {countRegisteredEvents().byDay["March 20, 2025"].count}/2 Events
                     </span>
                     {countRegisteredEvents().byDay["March 20, 2025"].hasWorkshop && (
@@ -649,8 +644,8 @@ export default function Events() {
                 <div className="flex justify-between items-center">
                   <span className="text-blue-300">Flagship Events</span>
                   <span className={`px-2 py-1 rounded-full text-xs ${countRegisteredEvents().byCategory.flagship === 0
-                      ? 'bg-blue-500/20 text-blue-300'
-                      : 'bg-green-500/20 text-green-300'
+                    ? 'bg-blue-500/20 text-blue-300'
+                    : 'bg-green-500/20 text-green-300'
                     }`}>
                     {countRegisteredEvents().byCategory.flagship}/1
                   </span>
@@ -660,8 +655,8 @@ export default function Events() {
                 <div className="flex justify-between items-center">
                   <span className="text-blue-300">Technical Events</span>
                   <span className={`px-2 py-1 rounded-full text-xs ${countRegisteredEvents().byCategory.technical === 0
-                      ? 'bg-blue-500/20 text-blue-300'
-                      : 'bg-green-500/20 text-green-300'
+                    ? 'bg-blue-500/20 text-blue-300'
+                    : 'bg-green-500/20 text-green-300'
                     }`}>
                     {countRegisteredEvents().byCategory.technical}
                   </span>
@@ -671,8 +666,8 @@ export default function Events() {
                 <div className="flex justify-between items-center">
                   <span className="text-blue-300">Non-Technical Events</span>
                   <span className={`px-2 py-1 rounded-full text-xs ${countRegisteredEvents().byCategory.nonTechnical === 0
-                      ? 'bg-blue-500/20 text-blue-300'
-                      : 'bg-green-500/20 text-green-300'
+                    ? 'bg-blue-500/20 text-blue-300'
+                    : 'bg-green-500/20 text-green-300'
                     }`}>
                     {countRegisteredEvents().byCategory.nonTechnical}
                   </span>
@@ -862,6 +857,10 @@ export default function Events() {
                       <div className="text-blue-200 font-medium">{selectedEvent.teamSize}</div>
                     </div>
                   </div>
+                  {selectedEvent.email && <div className='mt-4'>
+                    <div className="text-blue-400 text-sm">Abstract Submission</div>
+                    <div className="text-blue-200 font-medium">{selectedEvent.email}</div>
+                  </div>}
                 </div>
 
                 <div>

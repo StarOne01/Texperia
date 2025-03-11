@@ -1,18 +1,16 @@
-import paper from "../../public/paper.png";
 
-// Event data
 const events = [
     {
       id: 1,
       title: "Ink Sight (Paper Presentation)",
       description: "Present your research papers and innovative ideas to experts in the field. Showcase your technical knowledge and research skills through well-structured presentations.",
-      icon: paper,
       color: "#4fd1c5",
+      email: "texperia2k25.inksight@gmail.com",
       isTeamEvent: true,
       date: "March 19, 2025",
       time: "09:15 AM - 2:30 PM",
       venue: "Power System Simulation Laboratory",
-      prizes: "₹5,000+",
+      prizes: "Attractive prizes will be given",
       teamSize: "2-4 members",
       category: "flagship",
       rules: [
@@ -34,7 +32,7 @@ const events = [
     },
     {
       id: 2,
-      title: "Technical Quiz",
+      title: "War of Witz(Technical Quiz)",
       description: "Test your technical knowledge in this fast-paced, challenging quiz competition. Cover topics from electronics, programming, mathematics, and general engineering principles.",
       icon: "/icons/quiz.svg",
       color: "#38b2ac",
@@ -42,7 +40,7 @@ const events = [
       date: "March 19, 2025",
       time: "9.15 AM - 1:25 PM",
       venue: "Will be announced on the day of event",
-      prizes: "₹3,000+",
+      prizes: "Attractive prizes will be given",
       teamSize: "2-3 members",
       category: "technical",
       rules: [
@@ -67,15 +65,16 @@ const events = [
     },
     {
       id: 3,
-      title: "Hackathon",
+      title: "Solvelt hack(Hackathon)",
       description: "24 hours of coding, innovation, and problem-solving. Build solutions that matter in this intensive development marathon focused on real-world challenges.",
       icon: "/icons/code.svg",
       color: "#319795",
       isTeamEvent: true,
       date: "March 20, 2025",
+      email: "texperia2k25.solvelthack@gmail.com",
       time: "Starts at 9:00 AM",
       venue: "Power System Simulation Laboratory",
-      prizes: "₹5,000+",
+      prizes: "Attractive prizes will be given",
       teamSize: "3-4 members",
       category: "flagship",
       rules: [
@@ -98,14 +97,15 @@ const events = [
     },
     {
       id: 4,
-      title: "Project Presentation",
+      title: "Plan Pro(Project Presentation)",
       description: "Showcase your engineering projects and get feedback from industry experts. Present working prototypes or detailed models of your innovative engineering solutions.",
       icon: "/icons/project.svg",
       color: "#2c7a7b",
       date: "March 20, 2025",
       time: "09:00 AM - 4:00 PM",
       venue: "Machines laboratory",
-      prizes: "₹5,000+",
+      email: "texperia2k25.inksight@gmail.com",
+      prizes: "Attractive prizes will be given",
       isTeamEvent: true,
       teamSize: "2-4 members",
       category: "flagship",
@@ -129,7 +129,7 @@ const events = [
     },
     {
       id: 5,
-      title: "Rapid Prototype Challenge",
+      title: "Blink and Build(Rapid Prototype Challenge)",
       description: "Design, build and demonstrate a working prototype within a limited timeframe. Test your quick thinking and hands-on skills in this exciting time-bound challenge.",
       icon: "/public/prototype.svg",
       color: "#285e61",
@@ -137,7 +137,7 @@ const events = [
       isTeamEvent: true,
       time: "10:00 AM - 1:30 PM",
       venue: "Power Electronics and Drives Laboratory",
-      prizes: "₹3,000+",
+      prizes: "Attractive prizes will be given",
       teamSize: "2-3 members",
       category: "technical",
       rules: [
@@ -158,7 +158,7 @@ const events = [
     },
     {
       id: 6,
-      title: "Poster Presentation",
+      title: "Poster Perspective(Poster Presentation)",
       description: "Visualize your ideas through creative posters and win exciting prizes. Present complex technical concepts through effective visual communication.",
       icon: "/icons/poster.svg",
       color: "#234e52",
@@ -166,7 +166,7 @@ const events = [
       time: "9:00 AM - 1:00 PM",
       isTeamEvent: true,
       venue: "Will be announced on the day of event",
-      prizes: "₹5,000+",
+      prizes: "Attractive prizes will be given",
       teamSize: "1-2 members",
       category: "flagship",
       rules: [
@@ -189,7 +189,7 @@ const events = [
     },
     {
       id: 7,
-      title: "Circuit Debugging",
+      title: "Mission Debuggable(Circuit Debugging)",
       description: "Find and fix errors in complex electrical circuits against the clock. Test your troubleshooting skills and theoretical knowledge in this practical challenge.",
       icon: "/icons/circuit.svg",
       color: "#805ad5",
@@ -197,7 +197,7 @@ const events = [
       date: "March 20, 2025",
       time: "9:00 AM - 12:45 PM",
       venue: "Will be announced on the day of event",
-      prizes: "₹3,000+",
+      prizes: "Attractive prizes will be given",
       teamSize: "2 members",
       category: "technical",
       rules: [
@@ -217,14 +217,14 @@ const events = [
     },
     {
       id: 8,
-      title: "Sketch Your Creativity",
+      title: "Sketch Your Creativity(Drawing)",
       description: "Express your technical concepts through artistic sketches and diagrams. Blend art with engineering in this unique competition focusing on technical illustration.",
       icon: "/icons/sketch.svg",
       color: "#6b46c1",
       date: "March 20, 2025",
       time: "10:00 AM - 1:00 PM",
       venue: "Will be announced on the day of event",
-      prizes: "₹3,000+",
+      prizes: "Attractive prizes will be given",
       teamSize: "1 member",
       isTeamEvent: false,
       category: "non-technical",
@@ -306,7 +306,7 @@ const events = [
 
     // Workshop Day 2 - PCB Design
     {
-      id: 11,  // Using ID 12 since 11 is already used
+      id: 12,  // Using ID 12 since 11 is already used
       title: "Workshop - PCB Design",
       description: "Master the art of PCB design in this intensive workshop. Learn industry-standard design techniques, component selection, layout optimization, and manufacturing considerations.",
       icon: "/icons/workshop.svg",
@@ -338,7 +338,7 @@ const events = [
     },
 
     {
-      id: 12,
+      id: 11,
       title: "Electrical Safety Mime",
       description: "Creative performances highlighting the importance of electrical safety. Communicate important safety concepts through the art of mime and non-verbal expression.",
       icon: "/icons/safety.svg",
@@ -347,7 +347,7 @@ const events = [
       date: "March 20, 2025",
       time: "9:00 AM - 4:30 PM",
       venue: "Will be announced on the day of event",
-      prizes: "₹5,000+",
+      prizes: "Attractive prizes will be given",
       teamSize: "3-5 members",
       category: "non-technical",
       rules: [
