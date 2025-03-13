@@ -81,29 +81,7 @@ export default function Auth({ initialMode = 'login' }: AuthProps) {
         });
         
         if (error) throw error;
-        
-        // Also create a profile entry in the profiles table
-        if (data.user) {
-          const { error: profileError } = await supabase
-            .from('profiles')
-            .insert([
-              {
-                id: data.user.id,
-                email: email,
-                full_name: name,
-                college: college,
-                phone: phone,
-                year_of_study: yearOfStudy,
-                created_at: new Date().toISOString()
-              },
-            ]);
-            
-          if (profileError) {
-            console.error('Error creating profile:', profileError);
-            toast.error('Registration completed, but profile setup failed. Please contact support.');
-          }
-        }
-        
+
         toast.success('Check your email for the confirmation link');
       }
     } catch (error: any) {
