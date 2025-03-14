@@ -299,7 +299,42 @@ export default function Auth({ initialMode = 'login' }: AuthProps) {
         <div className="mt-4 text-center">
           <button
             type="button"
-            onClick={() => {/* Add forgot password handler */}}
+            onClick={async () => {
+              // Check if email is provided
+              if (!email.trim()) {
+                toast.error("Please enter your email address first");
+                setErrors({ ...errors, email: "Email is required for password reset" });
+                return;
+              }
+
+              // Validate email format
+              if (!/\S+@\S+\.\S+/.test(email)) {
+                toast.error("Please enter a valid email address");
+                setErrors({ ...errors, email: "Please enter a valid email" });
+                return;
+              }
+
+              setLoading(true);
+              try {
+                const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                  redirectTo: `${window.location.origin}/reset-password`,
+                });
+                
+                if (error) throw error;
+                
+                toast.success("Password reset instructions sent to your email");
+                toast.custom(
+                  <div className="bg-blue-900/70 p-4 rounded-md border border-blue-500/50">
+                    <p className="text-blue-200">Don't forget to check your spam folder!</p>
+                  </div>, 
+                  { duration: 6000 }
+                );
+              } catch (error: any) {
+                toast.error(error.message || "Failed to send reset instructions");
+              } finally {
+                setLoading(false);
+              }
+            }}
             className="text-blue-300 hover:underline text-sm"
           >
             Forgot password?
