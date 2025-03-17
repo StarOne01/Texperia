@@ -11,19 +11,21 @@ import Auth from "./components/Auth";
 import { supabase } from "./utils/supabaseClient";
 import Link from "next/link";
 import { User } from "@supabase/supabase-js";
-import  events from "./data/events";
+import events from "./data/events";
 
-  
 const getCategoryInfo = (category: string) => {
   switch (category) {
-    case 'flagship':
-      return { label: 'Flagship Event', color: 'from-purple-600 to-pink-600' };
-    case 'technical':
-      return { label: 'Technical Event', color: 'from-blue-600 to-cyan-600' };
-    case 'non-technical':
-      return { label: 'Non-Technical Event', color: 'from-green-600 to-teal-600' };
+    case "flagship":
+      return { label: "Flagship Event", color: "from-purple-600 to-pink-600" };
+    case "technical":
+      return { label: "Technical Event", color: "from-blue-600 to-cyan-600" };
+    case "non-technical":
+      return {
+        label: "Non-Technical Event",
+        color: "from-green-600 to-teal-600",
+      };
     default:
-      return { label: 'Event', color: 'from-gray-600 to-gray-600' };
+      return { label: "Event", color: "from-gray-600 to-gray-600" };
   }
 };
 
@@ -85,7 +87,9 @@ const faqs = [
 ];
 
 export default function Home() {
-  const [selectedEvent, setSelectedEvent] = useState<(typeof events)[0] | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<(typeof events)[0] | null>(
+    null
+  );
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [user, setUser] = useState<User | null>();
   const [timeLeft, setTimeLeft] = useState({
@@ -285,7 +289,7 @@ export default function Home() {
               className="text-blue-200 hover:text-blue-300 transition-colors"
             >
               Home
-            </ Link>
+            </Link>
             <Link
               href="#events"
               className="text-blue-200 hover:text-blue-300 transition-colors"
@@ -333,7 +337,7 @@ export default function Home() {
 
           {/* Mobile Menu Button */}
           <div className="lg:hidden">
-            <button 
+            <button
               className="text-blue-300 hover:text-blue-200"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
@@ -362,7 +366,7 @@ export default function Home() {
             </button>
           </div>
         </div>
-        
+
         {/* Mobile Menu */}
         <AnimatePresence>
           {isMobileMenuOpen && (
@@ -383,7 +387,7 @@ export default function Home() {
                     {item}
                   </Link>
                 ))}
-                
+
                 <div className="pt-2 border-t border-blue-500/20 mt-2">
                   {user ? (
                     <Link
@@ -416,7 +420,6 @@ export default function Home() {
             </motion.div>
           )}
         </AnimatePresence>
-        
       </nav>
 
       {/* Add padding to the header to account for the fixed navbar */}
@@ -477,7 +480,6 @@ export default function Home() {
           />
         ))}
       </div>
-      
 
       <main className="z-10 mx-auto">
         {/* Remove the fixed video container from here */}
@@ -604,7 +606,10 @@ export default function Home() {
               </Link>
             )}
 
-            <button onClick={()=> window.location.href='#events'} className="px-8 py-4 bg-transparent border-2 border-blue-500/30 hover:border-purple-500/50 rounded-full text-blue-300 hover:text-purple-300 font-bold transition-all transform hover:scale-105 backdrop-blur-sm">
+            <button
+              onClick={() => (window.location.href = "#events")}
+              className="px-8 py-4 bg-transparent border-2 border-blue-500/30 hover:border-purple-500/50 rounded-full text-blue-300 hover:text-purple-300 font-bold transition-all transform hover:scale-105 backdrop-blur-sm"
+            >
               <span className="flex items-center gap-2">
                 <span>Explore Events</span>
                 <svg
@@ -624,14 +629,17 @@ export default function Home() {
             </button>
           </div>
         </header>
-        <section id="venue" className="relative z-10 px-6 bg-gradient-to-b from-transparent to-blue-900/10">
+        <section
+          id="venue"
+          className="relative z-10 px-6 bg-gradient-to-b from-transparent to-blue-900/10"
+        >
           <div className="max-w-4xl mx-auto">
             <h1
               className={`text-4xl text-center md:text-5xl font-extrabold mb-10 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 ${anta.className} tracking-wider relative`}
             >
               Where?
             </h1>
-            
+
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -641,74 +649,106 @@ export default function Home() {
               <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl blur-xl opacity-30"></div>
               <div className="relative bg-gradient-to-br from-blue-900/50 to-purple-900/50 rounded-xl p-6 border border-blue-500/30 backdrop-blur-md">
                 <p className="text-lg text-blue-100 mb-6 leading-relaxed">
-                  Texperia 2025 is happening at SNS College of Technology, Coimbatore, hosted by the Department of Electrical and Electronics Engineering (EEE). This exciting technical event will bring together engineering students and professionals to explore, innovate, and showcase skills in electrical and electronics engineering.
+                  Texperia 2025 is happening at SNS College of Technology,
+                  Coimbatore, hosted by the Department of Electrical and
+                  Electronics Engineering (EEE). This exciting technical event
+                  will bring together engineering students and professionals to
+                  explore, innovate, and showcase skills in electrical and
+                  electronics engineering.
                 </p>
-                
+
                 <div className="grid md:grid-cols-2 gap-6 mt-8">
                   <div className="bg-blue-900/30 rounded-lg p-4 border border-blue-500/20">
-                    <h3 className="text-xl font-semibold text-blue-300 mb-3">Venue</h3>
+                    <h3 className="text-xl font-semibold text-blue-300 mb-3">
+                      Venue
+                    </h3>
                     <p className="text-blue-100">
-                      SNS College of Technology<br />
+                      SNS College of Technology
+                      <br />
                       Coimbatore, Tamil Nadu
                     </p>
                   </div>
-                  
+
                   <div className="bg-blue-900/30 rounded-lg p-4 border border-blue-500/20">
-                    <h3 className="text-xl font-semibold text-blue-300 mb-3">Organized by</h3>
+                    <h3 className="text-xl font-semibold text-blue-300 mb-3">
+                      Organized by
+                    </h3>
                     <p className="text-blue-100">
-                      Department of Electrical and<br />
+                      Department of Electrical and
+                      <br />
                       Electronics Engineering (EEE)
                     </p>
                   </div>
                 </div>
-                
+
                 <p className="text-center text-blue-200 mt-8 font-medium">
-                  Join us at Texperia 2025 for an immersive experience in learning, competition, and networking!
+                  Join us at Texperia 2025 for an immersive experience in
+                  learning, competition, and networking!
                 </p>
               </div>
-              
+
               {/* Interactive animation element */}
               <div className="absolute bottom-2 right-2 w-2 h-2 rounded-full bg-blue-400/50 animate-ping"></div>
-              <div className="absolute top-2 left-2 w-2 h-2 rounded-full bg-purple-400/50 animate-ping" style={{ animationDelay: "0.5s" }}></div>
+              <div
+                className="absolute top-2 left-2 w-2 h-2 rounded-full bg-purple-400/50 animate-ping"
+                style={{ animationDelay: "0.5s" }}
+              ></div>
             </motion.div>
           </div>
         </section>
         {/* Event Details Modal */}
         {isModalOpen && selectedEvent && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div 
+            <div
               className="absolute inset-0 bg-black/80 backdrop-blur-sm"
               onClick={() => setIsModalOpen(false)}
             ></div>
-            
-            <motion.div 
+
+            <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               className="relative bg-gradient-to-br from-blue-900/80 to-purple-900/80 rounded-xl border border-blue-500/30 p-6 max-w-3xl w-full max-h-[90vh] overflow-y-auto"
             >
-              <button 
+              <button
                 onClick={() => setIsModalOpen(false)}
                 className="absolute top-4 right-4 text-blue-400 hover:text-blue-300"
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
-              
+
               <div className="flex items-center gap-4 mb-6">
-                <div 
+                <div
                   className="w-16 h-16 rounded-full flex items-center justify-center"
                   style={{ backgroundColor: `${selectedEvent.color}30` }}
-                >
-                </div>
+                ></div>
                 <div>
-                  <h2 className={`text-3xl font-bold text-blue-300 ${anta.className}`}>{selectedEvent.title}</h2>
-                  <div className={`inline-block mt-2 text-xs px-3 py-1 rounded-full bg-gradient-to-r ${getCategoryInfo(selectedEvent.category).color} text-white font-medium`}>
+                  <h2
+                    className={`text-3xl font-bold text-blue-300 ${anta.className}`}
+                  >
+                    {selectedEvent.title}
+                  </h2>
+                  <div
+                    className={`inline-block mt-2 text-xs px-3 py-1 rounded-full bg-gradient-to-r ${
+                      getCategoryInfo(selectedEvent.category).color
+                    } text-white font-medium`}
+                  >
                     {getCategoryInfo(selectedEvent.category).label}
                   </div>
                 </div>
               </div>
-              
+
               <div className="grid md:grid-cols-3 gap-6 mb-6">
                 <div className="bg-blue-900/30 rounded-lg p-4 border border-blue-500/20">
                   <div className="text-blue-400 text-sm mb-1">Date</div>
@@ -723,59 +763,85 @@ export default function Home() {
                   <div className="text-blue-200">{selectedEvent.venue}</div>
                 </div>
               </div>
-              
+
               <div className="mb-8">
-                <h3 className="text-xl font-semibold text-blue-300 mb-3">Description</h3>
+                <h3 className="text-xl font-semibold text-blue-300 mb-3">
+                  Description
+                </h3>
                 <p className="text-blue-100/80">{selectedEvent.description}</p>
               </div>
-              
+
               <div className="grid md:grid-cols-2 gap-6 mb-8">
                 <div>
-                  <h3 className="text-xl font-semibold text-blue-300 mb-3">Event Details</h3>
+                  <h3 className="text-xl font-semibold text-blue-300 mb-3">
+                    Event Details
+                  </h3>
                   <div className="space-y-4">
                     <div>
                       <div className="text-blue-400 text-sm">Prize Pool</div>
-                      <div className="text-blue-200 font-medium">{selectedEvent.prizes}</div>
+                      <div className="text-blue-200 font-medium">
+                        {selectedEvent.prizes}
+                      </div>
                     </div>
                     <div>
                       <div className="text-blue-400 text-sm">Team Size</div>
-                      <div className="text-blue-200 font-medium">{selectedEvent.teamSize}</div>
+                      <div className="text-blue-200 font-medium">
+                        {selectedEvent.teamSize}
+                      </div>
                     </div>
                   </div>
                 </div>
-                
+
                 <div>
-                  <h3 className="text-xl font-semibold text-blue-300 mb-3">Staff Coordinators</h3>
-                  <div className="space-y-3">
-                    {selectedEvent.staffCoordinators.map((coordinator, idx) => (
-                      <div key={idx} className="flex flex-col">
-                        <div className="text-blue-200 font-medium">{coordinator.name}</div>
+                  {selectedEvent.staffCoordinators.length > 0 && (
+                    <div>
+                      <h3 className="text-xl font-semibold text-blue-300 mb-3">
+                        Staff Coordinators
+                      </h3>
+                      <div className="space-y-3">
+                        {selectedEvent.staffCoordinators.map(
+                          (coordinator, idx) => (
+                            <div key={idx} className="flex flex-col">
+                              <div className="text-blue-200 font-medium">
+                                {coordinator.name}
+                              </div>
+                            </div>
+                          )
+                        )}
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  )}
                   <div>
-                  <h3 className="text-xl font-semibold text-blue-300 mt-5 mb-3">Student Coordinators</h3>
-                  <div className="space-y-2">
-                    {selectedEvent.coordinators.map((coordinator, idx) => (
-                      <div key={idx} className="flex flex-col">
-                        <div className="text-blue-200 font-medium">{coordinator.name}</div>
-                        <div className="text-blue-400 text-sm">{coordinator.phone}</div>
-                      </div>
-                    ))}
-                  </div>
+                    <h3 className="text-xl font-semibold text-blue-300 mt-5 mb-3">
+                      Student Coordinators
+                    </h3>
+                    <div className="space-y-2">
+                      {selectedEvent.coordinators.map((coordinator, idx) => (
+                        <div key={idx} className="flex flex-col">
+                          <div className="text-blue-200 font-medium">
+                            {coordinator.name}
+                          </div>
+                          <div className="text-blue-400 text-sm">
+                            {coordinator.phone}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
-              
+
               <div className="mb-8">
-                <h3 className="text-xl font-semibold text-blue-300 mb-3">Rules & Guidelines</h3>
+                <h3 className="text-xl font-semibold text-blue-300 mb-3">
+                  Rules & Guidelines
+                </h3>
                 <ul className="list-disc list-inside space-y-2 text-blue-100/80">
                   {selectedEvent.rules.map((rule, idx) => (
                     <li key={idx}>{rule}</li>
                   ))}
                 </ul>
               </div>
-              
+
               <div className="flex justify-end gap-4">
                 <button
                   onClick={() => setIsModalOpen(false)}
@@ -788,74 +854,80 @@ export default function Home() {
           </div>
         )}
         <div className="relative z-10 py-20 bg-gradient-to-b from-blue-900/10 to-transparent">
-        <h1
-          className={`text-4xl mt-1 text-center mb-7 md:text-5xl font-extrabold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 ${anta.className} tracking-wider relative`}
-        >
-          Events
-        </h1>
-        <div
-          ref={eventsRef}
-          className="grid p-16 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8"
-        >
-          {events.map((event, index) => (
-            <div
-              key={event.id}
-              className="event-box opacity-0 translate-y-10 relative bg-gradient-to-br from-blue-900/30 to-purple-900/30 rounded-xl p-6 cursor-pointer backdrop-blur-sm border border-blue-500/20 overflow-hidden group"
-              onClick={() =>{ setSelectedEvent(event); setIsModalOpen(true);}}
-              style={{ "--delay": `${index * 0.1}s` } as React.CSSProperties}
-            >
+          <h1
+            className={`text-4xl mt-1 text-center mb-7 md:text-5xl font-extrabold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 ${anta.className} tracking-wider relative`}
+          >
+            Events
+          </h1>
+          <div
+            ref={eventsRef}
+            className="grid p-16 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8"
+          >
+            {events.map((event, index) => (
               <div
-                className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10 transform -translate-y-full group-hover:translate-y-0 transition-transform duration-500"
-                style={{
-                  background: `radial-gradient(circle at 50% 50%, ${event.color}20, transparent 70%)`,
+                key={event.id}
+                className="event-box opacity-0 translate-y-10 relative bg-gradient-to-br from-blue-900/30 to-purple-900/30 rounded-xl p-6 cursor-pointer backdrop-blur-sm border border-blue-500/20 overflow-hidden group"
+                onClick={() => {
+                  setSelectedEvent(event);
+                  setIsModalOpen(true);
                 }}
-              ></div>
-
-              {/* Event content */}
-              <div id="events" className="relative z-10">
+                style={{ "--delay": `${index * 0.1}s` } as React.CSSProperties}
+              >
                 <div
-                  className="w-16 h-16 mb-4 rounded-lg flex items-center justify-center"
-                  style={{ background: `${event.color}30` }}
-                >
-                  {/* Replace with your actual icons */}
-                  <div
-                    className="w-10 h-10 rounded flex items-center justify-center text-xl"
-                    style={{ background: `${event.color}50` }}
-                  >
-                    {event.id}
-                  </div>
-                </div>
-
-                <h3 className="text-xl font-bold mb-2 text-blue-300">
-                  {event.title}
-                </h3>
-                <div
-                  className="h-1 w-10 rounded mb-3 transition-all duration-300 group-hover:w-3/4"
+                  className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10 transform -translate-y-full group-hover:translate-y-0 transition-transform duration-500"
                   style={{
-                    background: `linear-gradient(to right, ${event.color}, #805ad5)`,
+                    background: `radial-gradient(circle at 50% 50%, ${event.color}20, transparent 70%)`,
                   }}
                 ></div>
-                <p className="text-blue-100/70 text-sm mb-3">
-                  {event.description.substring(0, 60)}...
-                </p>
-                <p className="text-blue-400 text-sm font-semibold mt-4 group-hover:text-blue-300 transition-colors">
-                  Click to explore →
-                </p>
-              </div>
 
-              {/* Interactive animation elements */}
-              <div className="absolute bottom-2 right-2 w-2 h-2 rounded-full bg-blue-400/50 group-hover:animate-ping"></div>
-              <div
-                className="absolute top-2 left-2 w-2 h-2 rounded-full bg-purple-400/50 group-hover:animate-ping"
-                style={{ animationDelay: "0.5s" }}
-              ></div>
-            </div>
-          ))}
+                {/* Event content */}
+                <div id="events" className="relative z-10">
+                  <div
+                    className="w-16 h-16 mb-4 rounded-lg flex items-center justify-center"
+                    style={{ background: `${event.color}30` }}
+                  >
+                    {/* Replace with your actual icons */}
+                    <div
+                      className="w-10 h-10 rounded flex items-center justify-center text-xl"
+                      style={{ background: `${event.color}50` }}
+                    >
+                      {event.id}
+                    </div>
+                  </div>
+
+                  <h3 className="text-xl font-bold mb-2 text-blue-300">
+                    {event.title}
+                  </h3>
+                  <div
+                    className="h-1 w-10 rounded mb-3 transition-all duration-300 group-hover:w-3/4"
+                    style={{
+                      background: `linear-gradient(to right, ${event.color}, #805ad5)`,
+                    }}
+                  ></div>
+                  <p className="text-blue-100/70 text-sm mb-3">
+                    {event.description.substring(0, 60)}...
+                  </p>
+                  <p className="text-blue-400 text-sm font-semibold mt-4 group-hover:text-blue-300 transition-colors">
+                    Click to explore →
+                  </p>
+                </div>
+
+                {/* Interactive animation elements */}
+                <div className="absolute bottom-2 right-2 w-2 h-2 rounded-full bg-blue-400/50 group-hover:animate-ping"></div>
+                <div
+                  className="absolute top-2 left-2 w-2 h-2 rounded-full bg-purple-400/50 group-hover:animate-ping"
+                  style={{ animationDelay: "0.5s" }}
+                ></div>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
 
         {/* About Section - Add after the Events section */}
-        <section id="about" className="relative z-10 px-6 py-20 bg-gradient-to-b from-blue-900/10 to-transparent">
+        <section
+          id="about"
+          className="relative z-10 px-6 py-20 bg-gradient-to-b from-blue-900/10 to-transparent"
+        >
           <div className="max-w-6xl mx-auto">
             <h2
               className={`text-4xl text-center md:text-5xl font-extrabold mb-12 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 ${anta.className} tracking-wider`}
@@ -945,7 +1017,10 @@ export default function Home() {
       </main>
 
       {/* FAQ Section */}
-      <div id="faq" className="relative z-10 px-6 py-16 bg-gradient-to-b from-transparent to-blue-900/20">
+      <div
+        id="faq"
+        className="relative z-10 px-6 py-16 bg-gradient-to-b from-transparent to-blue-900/20"
+      >
         <h2
           className={`text-4xl text-center md:text-5xl font-extrabold mb-12 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 ${anta.className} tracking-wider`}
         >

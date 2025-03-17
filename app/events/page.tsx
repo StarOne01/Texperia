@@ -104,6 +104,9 @@ export default function Events() {
   };
 
   const handleRegister = async (eventId: number) => {
+    if (eventId === 13){
+      window.open("https://docs.google.com/forms/d/e/1FAIpQLSeEX-cioLZd64a0HXyM0_ZiYzslawPqrtC61jbd1pYZuSbWSw/viewform?usp=sharing", "_blank");
+    }
     if (!user) {
       router.push("/login");
       return;
@@ -991,8 +994,8 @@ export default function Events() {
                     </div>
                   )}
                 </div>
-
-                {selectedEvent.staffCoordinators.length > 0 && (
+                <div>
+                  {selectedEvent.staffCoordinators.length > 0 && (
                   <div>
                     <h3 className="text-xl font-semibold text-blue-300 mb-3">
                       Staff Coordinators
@@ -1007,7 +1010,10 @@ export default function Events() {
                           </div>
                         )
                       )}
-                    </div>
+                  </div>
+                  </div>
+
+                  )}
                     <div>
                       <h3 className="text-xl font-semibold text-blue-300 mt-5 mb-3">
                         Student Coordinators
@@ -1026,7 +1032,6 @@ export default function Events() {
                       </div>
                     </div>
                   </div>
-                )}
               </div>
 
               <div className="mb-8">
