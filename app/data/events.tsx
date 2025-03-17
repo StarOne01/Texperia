@@ -365,7 +365,32 @@ const events = [
         { name: "Mr.Arivarasu.T", phone: "93457 31127" },
         { name: "Ms.Harshini.S", phone: "73588 82559" }
       ]
-    }
+    }, 
+    {
+      id: 13,
+      title: "Free Fire",
+      description: "Gear up for the ultimate Free Fire Battle Fest, where players from all around gather to test their skills, win exclusive rewards, and dominate the battleground!",
+      icon: "/icons/safety.svg",
+      color: "#3c366b",
+      isTeamEvent: true,
+      date: "March 20, 2025",
+      time: "9:00 AM - 4:30 PM",
+      venue: "Will be announced on the day of event",
+      prizes: "Attractive prizes will be given",
+      teamSize: "3-5 members",
+      category: "non-technical",
+      staffCoordinators: [],
+      rules: [
+        "Don't break Glow walls",
+        "Don't use grenades",
+        "On-spot registration can be done",
+        "If any cheat detected that team will be disqualified"
+      ],
+      coordinators: [
+        { name: "Mr.Jagadheesh kumar.S", phone: "93610 62776" },
+        { name: "Mr.Avinash.V", phone: "88254 97699" }
+      ]
+    }
   ];
 
 export default events;
