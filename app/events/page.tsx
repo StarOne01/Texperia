@@ -106,6 +106,7 @@ export default function Events() {
   const handleRegister = async (eventId: number) => {
     if (eventId === 13){
       window.open("https://docs.google.com/forms/d/e/1FAIpQLSeEX-cioLZd64a0HXyM0_ZiYzslawPqrtC61jbd1pYZuSbWSw/viewform?usp=sharing", "_blank");
+      return;
     }
     if (!user) {
       router.push("/login");
