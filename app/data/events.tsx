@@ -247,17 +247,16 @@ const events = [
       id: 9,
       title: "CEO Talk",
       isTeamEvent: false,
-      description: "Hear industry leaders share insights on technology trends and career paths. Engage with top executives and gain valuable perspective on the future of engineering and technology.",
+      description: "Maha Vignesh N is the founder and CEO of Spacim,a Company at the forefront of Space Technology Innovation. Engage with Top Executive and Gain Valueable perspective on the future of Technology",
       icon: "/icons/talk.svg",
       color: "#553c9a",
       date: "March 19, 2025",
-      time: "9:45 AM - 12:45 PM",
-      venue: "Will be announced on the day of event",
-      prizes: "Certificate of Participation",
+      time: "11:30 AM - 01:00 PM",
+      venue: "B block Simulation Lab",
+      prizes: "N/A",
       teamSize: "Individual Registration",
       category: "non-technical",
       rules: [
-        "On-spot registration can be done",
         "Professional etiquette expected",
         "Recording permitted only with prior permission"
       ],
@@ -292,7 +291,7 @@ const events = [
         "Limited seats available (50 participants)",
         "Basic knowledge of electronics recommended",
         "Registration fee: ₹300",
-        "No lunch provided - participants must make their own arrangements"
+        "Lunch will be provided"
       ],
       staffCoordinators: [
         { name: "Dr.D.Revathi AP/EEE"}
@@ -325,7 +324,7 @@ const events = [
         "Limited seats available (50 participants)",
         "Basic knowledge of electronics recommended",
         "Registration fee: ₹300",
-        "No lunch provided - participants must make their own arrangements"
+        "Lunch will be provided"
       ],
       staffCoordinators: [
         { name: "Dr.D.Revathi AP/EEE"}
