@@ -224,7 +224,7 @@ export default function Events() {
     // 3. Check category limits PER DAY
     if (event.category === 'flagship') {
       // Can only register for 1 flagship event PER DAY
-      return counts.byDay[day].byCategory.flagship < 1;
+      return counts.byDay[day].byCategory.flagship < 2;
     } else {
       // Can register for max 2 events from technical and non-technical combined
       const dayTechCount = counts.byDay[day].byCategory.technical;
