@@ -14,7 +14,6 @@ const events = [
       teamSize: "2-4 members",
       category: "flagship",
       rules: [
-        "Submit abstract with a premliminary payment of ₹30 before March 16 ,2025",
         "Once the teams are selected team members have to pay the registration amount for the event to participate in the event",
         "On-spot registrations are not encouraged",
         "Presentation duration: 7 minutes",

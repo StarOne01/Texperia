@@ -680,7 +680,7 @@ export default function Events() {
                   <li>Alternatively, you can register for a workshop on either day (instead of regular events)</li>
                   <li>If you register for a workshop on a particular day, you cannot register for any other events on that day</li>
                   <li>Registration fee: ₹300 per day (events or workshop)</li>
-                  <li>Lunch is provided for event participants but not for workshop attendees</li>
+                  <li>Lunch is provided for all event participants</li>
                 </ul>
               </div>
             </div>
