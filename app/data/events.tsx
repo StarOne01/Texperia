@@ -302,6 +302,39 @@ const events = [
       ]
     },
 
+
+    {
+      id: 11,
+      title: "Short Film and Mime Content",
+      description: "showcase your creativity and storytelling skills through mime performances. Engage the audience with expressive gestures and movements in this silent yet powerful art form.",
+      icon: "/icons/safety.svg",
+      color: "#3c366b",
+      isTeamEvent: true,
+      date: "March 20, 2025",
+      time: "9:00 AM - 4:30 PM",
+      venue: "Will be announced on the day of event",
+      prizes: "Attractive prizes will be given",
+      teamSize: "3-5 members",
+      category: "non-technical",
+      rules: [
+        "Performance duration: 5-7 minutes",
+        "No dialogues allowed",
+        "On-spot registration can be done",
+        "Background music permitted",
+        "Props should be minimal and relevant",
+        "If there are any video to be played during the play kindly submit it to the respective co-ordinator",
+        "Judging based on clarity of message, creativity, and execution",
+        "Judge's decision is final"
+      ],
+      staffCoordinators: [
+        { name: "Mr.R.Satheeshkumar AP/EEE"}
+      ],
+      coordinators: [
+        { name: "Mr.Arivarasu.T", phone: "93457 31127" },
+        { name: "Ms.Harshini.S", phone: "73588 82559" }
+      ]
+    },
+
     // Workshop Day 2 - PCB Design
     {
       id: 12,  // Using ID 12 since 11 is already used
@@ -334,38 +367,6 @@ const events = [
         { name: "Ms.Monika sree.D", phone: "87540 17645" }
       ]
     },
-
-    {
-      id: 11,
-      title: "Short Film and Mime Content",
-      description: "showcase your creativity and storytelling skills through mime performances. Engage the audience with expressive gestures and movements in this silent yet powerful art form.",
-      icon: "/icons/safety.svg",
-      color: "#3c366b",
-      isTeamEvent: true,
-      date: "March 20, 2025",
-      time: "9:00 AM - 4:30 PM",
-      venue: "Will be announced on the day of event",
-      prizes: "Attractive prizes will be given",
-      teamSize: "3-5 members",
-      category: "non-technical",
-      rules: [
-        "Performance duration: 5-7 minutes",
-        "No dialogues allowed",
-        "On-spot registration can be done",
-        "Background music permitted",
-        "Props should be minimal and relevant",
-        "If there are any video to be played during the play kindly submit it to the respective co-ordinator",
-        "Judging based on clarity of message, creativity, and execution",
-        "Judge's decision is final"
-      ],
-      staffCoordinators: [
-        { name: "Mr.R.Satheeshkumar AP/EEE"}
-      ],
-      coordinators: [
-        { name: "Mr.Arivarasu.T", phone: "93457 31127" },
-        { name: "Ms.Harshini.S", phone: "73588 82559" }
-      ]
-    }, 
     {
       id: 13,
       title: "Free Fire",
