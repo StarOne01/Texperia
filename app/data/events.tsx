@@ -337,8 +337,8 @@ const events = [
 
     {
       id: 11,
-      title: "Electrical Safety Mime",
-      description: "Creative performances highlighting the importance of electrical safety. Communicate important safety concepts through the art of mime and non-verbal expression.",
+      title: "Short and Mime Content",
+      description: "howcase your creativity and storytelling skills through mime performances. Engage the audience with expressive gestures and movements in this silent yet powerful art form.",
       icon: "/icons/safety.svg",
       color: "#3c366b",
       isTeamEvent: true,
